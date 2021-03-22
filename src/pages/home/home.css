@@ -1,0 +1,9 @@
+.layout-content {
+  min-height: 280px;
+  padding: 24px;
+  margin: 0 50px;
+  background: #fff;
+}
+.layout-footer {
+  text-align: center;
+}

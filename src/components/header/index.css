@@ -1,0 +1,32 @@
+.top-nav {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #001529;
+}
+.top-nav .top-nav-header {
+  display: flex;
+  flex-direction: row;
+  height: 65px;
+  align-items: center;
+}
+.top-nav .top-nav-header img {
+  margin: 0 15px 0 50px;
+  width: 40px;
+  height: 40px;
+}
+.top-nav .top-nav-header h1 {
+  color: white;
+  font-size: 20px;
+  margin-bottom: 0;
+}
+.top-nav .header .header-top {
+  margin: 0 30px 0 0;
+  color: white;
+}
+.ant-menu-item,
+.ant-menu-submenu {
+  line-height: 65px;
+}
