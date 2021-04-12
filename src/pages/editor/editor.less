@@ -1,0 +1,48 @@
+//编辑器头部、菜单、操作栏高度
+@headSize: 60px;
+@menuSize: 275px;
+@operatorSize: 275px;
+
+@ibc: #dcdfe6; //边框色
+@ibl: #ebeef5; //边框色（淡）
+@itc: #314659; //字体颜色
+@icc: rgba(0, 0, 0, 0.45); //图标颜色
+@boxShadowColor: #f0f1f2; //阴影颜色
+@primary: #409eff; //基础色
+
+.editor {
+  height: 540px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+
+  .editor-head,
+  .editor-content,
+  .editor-operator {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .editor-menu {
+    width: @menuSize;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #f00e0e;
+  }
+
+  .editor-content {
+    flex-grow: 1;
+    // background-color: #fff;
+    justify-content: flex-start;
+    .editor-content-head {
+      height: @headSize;
+      // background-color: #409eff;
+    }
+  }
+
+  .editor-operator {
+    width: @operatorSize;
+    background-color: #c9f357;
+  }
+}

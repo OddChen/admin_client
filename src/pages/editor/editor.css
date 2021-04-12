@@ -1,0 +1,30 @@
+.editor {
+  height: 540px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+.editor .editor-head,
+.editor .editor-content,
+.editor .editor-operator {
+  display: flex;
+  flex-direction: column;
+}
+.editor .editor-menu {
+  width: 275px;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #f00e0e;
+}
+.editor .editor-content {
+  flex-grow: 1;
+  justify-content: flex-start;
+}
+.editor .editor-content .editor-content-head {
+  height: 60px;
+}
+.editor .editor-operator {
+  width: 275px;
+  background-color: #c9f357;
+}

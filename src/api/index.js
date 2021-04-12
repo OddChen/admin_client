@@ -3,9 +3,11 @@
 每个函数的返回值都是promise
 */
 
-import ajax from './ajax';
+import ajax from './ajax'
 //登录
-export const reqLogin = (username, password) => ajax('/login', {username, password}, 'POST')
+export const reqLogin = (username, password) =>
+  ajax('/login', { username, password }, 'POST')
 
 //添加用户
-export const reqAddUser = (user) => ajax('/manage/user/add', user, 'POST')
+export const reqAddUser = (user, password, region) =>
+  ajax('/reigister', user, 'POST')

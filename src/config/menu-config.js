@@ -5,15 +5,15 @@ import {
   UserOutlined,
 } from '@ant-design/icons'
 
-const menulist = [
+const menuList = [
   {
     title: '展示',
     path: '/dashboard',
     icon: <PieChartOutlined />,
   },
   {
-    title: '设计',
-    path: '/design',
+    title: '编辑',
+    path: '/editor',
     icon: <AppstoreOutlined />,
   },
   {
@@ -22,12 +22,17 @@ const menulist = [
     icon: <BlockOutlined />,
     children: [
       {
+        title: '用户信息管理',
+        path: '/manage/user',
+        icon: <UserOutlined />,
+      },
+      {
         title: '用户内容管理',
-        path: '/user',
+        path: '/manage/usercontent',
         icon: <UserOutlined />,
       },
     ],
   },
 ]
 
-export default menulist
+export default menuList

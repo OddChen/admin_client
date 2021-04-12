@@ -1,11 +1,10 @@
 import React from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
-import { Layout } from 'antd'
+import { Layout, Breadcrumb } from 'antd'
 import Header from '../../components/header'
 import memoryUtils from '../../utils/memoryUtils'
 import './home.less'
-import Design from '../design/design'
-import Manage from '../manage/manage'
+import Editor from '../editor/editor'
 import DashBoard from '../dashboard/dashboard'
 import User from '../user/user'
 
@@ -20,19 +19,41 @@ class Dashboard extends React.Component {
       //跳转到登录
       return <Redirect to='/login' />
     }
+
+    //面包屑同步
+    let path = this.props.location.pathname.split('/').filter((i) => i)
+    //console.log(path)
+    const breadcrumbNameMap = {
+      '/dashboard': '展示',
+      '/editor': '编辑',
+      //'/manage': '管理',
+      '/manage/user': '用户管理',
+    }
+    const extraBreadcrumbItems = path.map((_, index) => {
+      const url = `/${path.slice(0, index + 1).join('/')}`
+      return (
+        <Breadcrumb.Item key={url}>{breadcrumbNameMap[url]}</Breadcrumb.Item>
+      )
+    })
+
     return (
       <div>
-        <Layout className='layout'>
+        <Layout>
           <Header />
-          <Content className='layout-content'>
-            <Switch>
-              <Route path='/dashboard' component={DashBoard} />
-              <Route path='/design' component={Design} />
-              <Route path='/manage' component={Manage} />
-              <Route path='/user' component={User} />
-              <Redirect to='/' />
-            </Switch>
-          </Content>
+          <Layout className='layout'>
+            <Breadcrumb className='layout-breadcrumb'>
+              {extraBreadcrumbItems}
+            </Breadcrumb>
+            <Content className='layout-content'>
+              <Switch>
+                <Route path='/dashboard' component={DashBoard} />
+                <Route path='/editor' component={Editor} />
+                <Route path='/manage/user' component={User} />
+                <Redirect to='/dashboard' />
+              </Switch>
+            </Content>
+          </Layout>
+
           <Footer className='layout-footer'>推荐使用谷歌浏览器</Footer>
         </Layout>
       </div>

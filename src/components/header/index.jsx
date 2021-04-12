@@ -1,49 +1,82 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { Menu } from 'antd'
+import React, { Component } from 'react'
+import { Link, withRouter } from 'react-router-dom'
+import { Menu, Modal } from 'antd'
 import logo from '../../assets/images/LOGO.png'
 import './index.less'
 import menuList from '../../config/menu-config'
 import SubMenu from 'antd/lib/menu/SubMenu'
+import LinkButton from '../link-button'
+import memoryUtils from '../../utils/memoryUtils'
+import storageUtils from '../../utils/storageUtils'
 
-function Header() {
-  return (
-    <div className='top-nav'>
-      <Link to='/' className='top-nav-header'>
-        <img src={logo} alt='logo' />
-        <h1>智慧城市评价结果可视化</h1>
-      </Link>
-      <Menu theme='dark' mode='horizontal'>
-        {menuList.map((item) => {
-          if (!item.children) {
-            return (
-              <Menu.Item key={item.path} icon={item.icon}>
-                <Link to={item.path}>{item.title}</Link>
-              </Menu.Item>
-            )
-          } else {
-            return (
-              <SubMenu key={item.path} icon={item.icon} title={item.title}>
-                {item.children.map((citem) => {
-                  return (
-                    <Menu.Item key={citem.path} icon={citem.icon}>
-                      <Link to={citem.path}>{citem.title}</Link>
-                    </Menu.Item>
-                  )
-                })}
-              </SubMenu>
-            )
-          }
-        })}
-      </Menu>
-      <div className='header'>
-        <div className='header-top'>
-          <span>欢迎，admin</span>
-          <a href='test'>退出</a>
+class Header extends Component {
+  constructor(props) {
+    super(props)
+    this.menuNodes = this.getMeunNodes(menuList)
+  }
+  getMeunNodes = (menuList) => {
+    let path = this.props.location.pathname
+    return menuList.reduce((pre, item) => {
+      if (!item.children) {
+        pre.push(
+          <Menu.Item key={item.path} icon={item.icon}>
+            <Link to={item.path}>{item.title}</Link>
+          </Menu.Item>
+        )
+      } else {
+        const cItem = item.children.find((cItem) => cItem.key === path)
+        if (cItem) {
+          this.openKey = item.key
+        }
+        pre.push(
+          <SubMenu key={item.path} icon={item.icon} title={item.title}>
+            {this.getMeunNodes(item.children)}
+          </SubMenu>
+        )
+      }
+      return pre
+    }, [])
+  }
+
+  logout = () => {
+    Modal.confirm({
+      title: '确认退出登录？',
+      onOk: () => {
+        storageUtils.removeUser()
+        memoryUtils.user = {}
+        this.props.history.replace('/login')
+      },
+    })
+  }
+
+  render() {
+    let path = this.props.location.pathname
+    const openKey = this.openKey
+    const username = memoryUtils.user.username
+
+    return (
+      <div className='top-nav'>
+        <Link to='/' className='top-nav-header'>
+          <img src={logo} alt='logo' />
+          <h1>智慧城市评价结果可视化</h1>
+        </Link>
+        <Menu
+          theme='dark'
+          mode='horizontal'
+          selectedKeys={[path]}
+          defaultOpenKeys={[openKey]}
+        >
+          {this.menuNodes}
+        </Menu>
+        <div className='header'>
+          <div className='header-top'>
+            <span>欢迎，{username} </span>
+            <LinkButton onClick={this.logout}>退出</LinkButton>
+          </div>
         </div>
       </div>
-    </div>
-  )
+    )
+  }
 }
 
-export default Header
+export default withRouter(Header)
