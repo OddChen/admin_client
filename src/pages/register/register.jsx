@@ -73,7 +73,7 @@ class Register extends Component {
               </Form.Item>
               <Form.Item name='province'>
                 <Cascader
-                  options={options.options}
+                  options={options}
                   onChange={this.onChange}
                   placeholder='请选择所属城市'
                 />

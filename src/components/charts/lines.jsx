@@ -7,33 +7,36 @@ import { CanvasRenderer } from 'echarts/renderers'
 class LineExample extends React.Component {
   componentDidMount() {
     echarts.use([GridComponent, LineChart, CanvasRenderer])
-
-    var chartDom = document.getElementById('linechart')
-    var myChart = echarts.init(chartDom)
+    var chartDom = document.getElementById(`${this.props.id}`)
+    var myLineChart = echarts.init(chartDom)
     var option
 
     option = {
       xAxis: {
         type: 'category',
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        data: ['一', '二', '三'],
       },
       yAxis: {
         type: 'value',
       },
       series: [
         {
-          data: [150, 230, 224, 218, 135, 147, 260],
+          data: [150, 230, 224],
           type: 'line',
         },
       ],
     }
 
-    option && myChart.setOption(option)
+    option && myLineChart.setOption(option)
   }
   render() {
+    // console.log(this.props.id)
     return (
       <div>
-        <div id='linechart' style={{ height: '300px', width: '300px' }}></div>
+        <div
+          id={this.props.id}
+          style={{ height: '200px', width: '200px' }}
+        ></div>
       </div>
     )
   }

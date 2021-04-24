@@ -13,9 +13,39 @@
 }
 .editor .editor-menu {
   width: 275px;
+  background-color: white;
+  border-right: solid 1px #dcdfe6;
   padding: 20px;
   box-sizing: border-box;
-  background-color: #f00e0e;
+}
+.editor .editor-menu .editor-menu-item {
+  border: solid 2px #dcdfe6;
+  margin-bottom: 20px;
+  position: relative;
+  padding: 30px 10px 0 10px;
+  text-align: center;
+}
+.editor .editor-menu .editor-menu-item::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  content: '';
+}
+.editor .editor-menu .editor-menu-item:hover {
+  border-color: #409eff;
+  cursor: pointer;
+}
+.editor .editor-menu .editor-menu-item .editor-menu-item-name {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  background-color: #409eff;
+  color: white;
+  font-size: 12px;
+  line-height: 2em;
+  padding: 0 20px;
 }
 .editor .editor-content {
   flex-grow: 1;
@@ -23,6 +53,19 @@
 }
 .editor .editor-content .editor-content-head {
   height: 60px;
+  border: solid 2px #dcdfe6;
+}
+.editor .editor-content .editor-content-body {
+  height: 500px;
+  background-color: #f6f6f6;
+}
+.editor .editor-content .editor-content-body .editor-container {
+  background-color: #fff;
+  position: relative;
+  margin: auto;
+}
+.editor .editor-content .editor-content-body .editor-container .editor-block {
+  position: absolute;
 }
 .editor .editor-operator {
   width: 275px;

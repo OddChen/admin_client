@@ -4,12 +4,27 @@ import EditorPage from './components/editor.page'
 import { editorConfig } from './components/editor.config'
 
 const Editor = () => {
-  const [editorValue, setEditorValue] = useState({
-    container: {
-      height: 700,
-      width: 1000,
-    },
-    blocks: [],
+  const [editorValue, setEditorValue] = useState(() => {
+    const val = {
+      container: {
+        height: 400,
+        width: 600,
+      },
+      blocks: [
+        {
+          componentKey: 'bingtu',
+          top: 100,
+          left: 100,
+          adjustPosition: false,
+        },
+        // {
+        //   componentKey: 'linechart',
+        //   top: 200,
+        //   left: 200,
+        // },
+      ],
+    }
+    return val
   })
   return (
     <EditorPage
