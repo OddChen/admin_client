@@ -67,28 +67,111 @@ const EditorPage = (props) => {
         })
       },
     }
-
     return block
   })()
+
+  //统计所有被选中的block元素
+  const focusData = useMemo(() => {
+    const focus = []
+    const unfocus = []
+    props.value.blocks.forEach((block) =>
+      (block.focus ? focus : unfocus).push(block)
+    )
+    return {
+      focus,
+      unfocus,
+    }
+  }, [props.value.blocks])
+
+  //对外暴露的方法
+  const methods = {
+    // 更新blocks，重新渲染
+    updateBlocks: (blocks) => {
+      props.onChange({
+        ...props.value,
+        blocks: [...blocks],
+      })
+    },
+    //清空选中的元素
+    clearFocus: (external) =>
+      (!!external
+        ? focusData.focus.filter((item) => item !== external)
+        : focusData.focus
+      ).forEach((block) => {
+        block.focus = false
+      }, methods.updateBlocks(props.value.blocks)),
+  }
 
   //处理block元素的选中事件
   const focusHandler = (() => {
     //点击block元素的动作
-    const mousedownBlock = (e) => {
-      console.log('222')
+    const block = (e, block) => {
+      //按住shift键后的效果，实现多选
+      if (e.shiftKey) {
+        if (focusData.focus.length <= 1) {
+          block.focus = true
+        } else {
+          block.focus = !block.focus
+        }
+        methods.updateBlocks(props.value.blocks)
+      } else {
+        if (!block.focus) {
+          block.focus = true
+          methods.clearFocus(block)
+        }
+      }
+      blockDraggier.mousedown(e)
     }
     //点击容器
-    const mousedownContainer = (e) => {
+    const container = (e) => {
       //排除点击到block元素
       if (e.target !== e.currentTarget) {
         return
       }
-      console.log('点击了container')
+      if (!e.shiftKey) {
+        methods.clearFocus()
+      }
     }
     return {
-      block: mousedownBlock,
-      container: mousedownContainer,
+      block,
+      container,
     }
+  })()
+
+  //拖拽所有被选中的block
+  const blockDragData = useRef({
+    startX: 0,
+    startY: 0,
+    startPosArray: [],
+  })
+  const blockDraggier = (() => {
+    const mousedown = (e) => {
+      document.addEventListener('mousemove', mousemove)
+      document.addEventListener('mouseup', mouseup)
+      //当前鼠标位置以及所有被选中元素的位置
+      blockDragData.current = {
+        startX: e.clientX,
+        startY: e.clientY,
+        startPosArray: focusData.focus.map(({ top, left }) => ({ top, left })),
+      }
+    }
+    const mousemove = (e) => {
+      const { startX, startY, startPosArray } = blockDragData.current
+      const { clientX: moveX, clientY: moveY } = e
+      const durX = moveX - startX
+      const durY = moveY - startY
+      focusData.focus.forEach((block, index) => {
+        const { top, left } = startPosArray[index]
+        block.top = top + durY
+        block.left = left + durX
+      })
+      methods.updateBlocks(props.value.blocks)
+    }
+    const mouseup = (e) => {
+      document.removeEventListener('mousemove', mousemove)
+      document.removeEventListener('mouseup', mouseup)
+    }
+    return { mousedown }
   })()
 
   return (
@@ -121,7 +204,7 @@ const EditorPage = (props) => {
                 key={index}
                 block={block}
                 config={props.config}
-                onMouseDown={focusHandler.block}
+                onMouseDown={(e) => focusHandler.block(e, block)}
               />
             ))}
           </div>

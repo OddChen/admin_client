@@ -67,6 +67,23 @@
 .editor .editor-content .editor-content-body .editor-container .editor-block {
   position: absolute;
 }
+.editor .editor-content .editor-content-body .editor-container .editor-block::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.editor .editor-content .editor-content-body .editor-container .editor-block.editor-block-focus::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  bottom: -4px;
+  left: -4px;
+  border: dashed 1px #409eff;
+}
 .editor .editor-operator {
   width: 275px;
   background-color: #c9f357;

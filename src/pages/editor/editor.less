@@ -86,6 +86,26 @@
         margin: auto;
         .editor-block {
           position: absolute;
+          &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+          }
+          &.editor-block-focus {
+            &::before {
+              content: '';
+              position: absolute;
+              @size: 4px;
+              top: -@size;
+              right: -@size;
+              bottom: -@size;
+              left: -@size;
+              border: dashed 1px @primary;
+            }
+          }
         }
       }
     }

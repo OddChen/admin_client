@@ -8,14 +8,15 @@ const Editor = () => {
     const val = {
       container: {
         height: 400,
-        width: 600,
+        width: 700,
       },
       blocks: [
         {
-          componentKey: 'bingtu',
+          componentKey: 'linechart',
           top: 100,
           left: 100,
           adjustPosition: false,
+          focus: false,
         },
         // {
         //   componentKey: 'linechart',

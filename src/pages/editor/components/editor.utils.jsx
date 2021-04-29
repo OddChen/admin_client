@@ -35,5 +35,7 @@ export function createEditorBlock({ top, left, component }) {
     left,
     //是否需要调整位置
     adjustPosition: true,
+    //是否被选中
+    focus: false,
   }
 }

@@ -3,6 +3,7 @@ import { useUpdate } from '../hook/useUpadate'
 
 //props: block, config, onMousedown
 export const EditorBlock = (props) => {
+  //样式
   const styles = useMemo(() => {
     return {
       top: `${props.block.top}px`,
@@ -10,6 +11,14 @@ export const EditorBlock = (props) => {
       opacity: props.block.adjustPosition ? '0' : '',
     }
   }, [props.block.top, props.block.left, props.block.adjustPosition])
+  //添加选中边框样式
+  const classes = useMemo(
+    () =>
+      ['editor-block', props.block.focus ? 'editor-block-focus' : null].join(
+        ' '
+      ),
+    [props.block.focus]
+  )
 
   const component = props.config.componentMap[props.block.componentKey]
   let render
@@ -37,7 +46,7 @@ export const EditorBlock = (props) => {
 
   return (
     <div
-      className='editor-block'
+      className={classes}
       style={styles}
       ref={elRef}
       onMouseDown={props.onMouseDown}
