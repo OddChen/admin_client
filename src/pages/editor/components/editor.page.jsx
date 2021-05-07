@@ -1,6 +1,8 @@
-import React, { useRef, useMemo } from 'react'
+import React, { useRef, useMemo, useState } from 'react'
 import { createEditorBlock } from './editor.utils'
 import { EditorBlock } from './editorblock'
+import '../iconfont/iconfont.css'
+import { useEidtorCommand } from './editor.commander'
 
 const EditorPage = (props) => {
   // container dom对象引用
@@ -83,7 +85,7 @@ const EditorPage = (props) => {
     }
   }, [props.value.blocks])
 
-  //对外暴露的方法
+  //对外暴露的方法，重新渲染和清除未选项边框
   const methods = {
     // 更新blocks，重新渲染
     updateBlocks: (blocks) => {
@@ -174,6 +176,82 @@ const EditorPage = (props) => {
     return { mousedown }
   })()
 
+  /**
+   * header的功能选项按钮
+   **/
+  //当前的预览状态
+  const [preview, setPreview] = useState(false)
+  //当前的编辑状态
+  const [editing, setEditing] = useState(false)
+  //命令管理
+  const commander = useEidtorCommand({
+    value: props.value,
+    focusData,
+    updateBlocks: methods.updateBlocks,
+  })
+
+  const buttons = [
+    {
+      label: '撤销',
+      icon: 'icon-back',
+      handler: () => commander.undo(),
+      tip: 'ctrl+z',
+    },
+    {
+      label: '重做',
+      icon: 'icon-forward',
+      handler: () => commander.redo(),
+      tip: 'ctrl+y, ctri+shift+z',
+    },
+    {
+      label: () => (preview ? '编辑' : '预览'),
+      icon: () => (preview ? 'icon-edit' : 'icon-browse'),
+      handler: () => {
+        if (!preview) {
+          methods.clearFocus()
+        }
+        setPreview(!preview)
+      },
+    },
+    {
+      label: '导入',
+      icon: 'icon-import',
+      handler: () => {},
+    },
+    {
+      label: '导出',
+      icon: 'icon-export',
+      handler: () => {},
+    },
+    {
+      label: '置顶',
+      icon: 'icon-place-top',
+      handler: () => {},
+      tip: 'ctrl+up',
+    },
+    {
+      label: '置底',
+      icon: 'icon-place-bottom',
+      handler: () => {},
+      tip: 'ctrl+down',
+    },
+    {
+      label: '删除',
+      icon: 'icon-delete',
+      handler: commander.delete,
+      tip: 'ctrl+d, backspace, delete',
+    },
+    { label: '清空', icon: 'icon-reset', handler: () => {} },
+    {
+      label: '关闭',
+      icon: 'icon-close',
+      handler: () => {
+        methods.clearFocus()
+        setEditing(false)
+      },
+    },
+  ]
+
   return (
     <div className='editor'>
       <div className='editor-menu'>
@@ -191,7 +269,23 @@ const EditorPage = (props) => {
         ))}
       </div>
       <div className='editor-content'>
-        <div className='editor-content-head'>head</div>
+        <div className='editor-content-head'>
+          {buttons.map((btn, index) => {
+            const label =
+              typeof btn.label === 'function' ? btn.label() : btn.label
+            const icon = typeof btn.icon === 'function' ? btn.icon() : btn.icon
+            return (
+              <div
+                className='editor-content-head-btn'
+                key={index}
+                onClick={btn.handler}
+              >
+                <i className={`iconfont ${icon}`} />
+                <span>{label}</span>
+              </div>
+            )
+          })}
+        </div>
         <div className='editor-content-body'>
           <div
             className='editor-container'
