@@ -37,5 +37,6 @@ export function createEditorBlock({ top, left, component }) {
     adjustPosition: true,
     //是否被选中
     focus: false,
+    zIndex: 0,
   }
 }

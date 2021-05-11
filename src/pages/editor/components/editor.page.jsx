@@ -3,8 +3,15 @@ import { createEditorBlock } from './editor.utils'
 import { EditorBlock } from './editorblock'
 import '../iconfont/iconfont.css'
 import { useEidtorCommand } from './editor.commander'
+import { createEvent } from '../plugins/event'
+import { CallBackRef } from '../hooks/CallbackRef'
+import { Route, withRouter } from 'react-router'
 
 const EditorPage = (props) => {
+  //当前的预览状态
+  const [preview, setPreview] = useState(false)
+  //当前的编辑状态
+  const [editing, setEditing] = useState(false)
   // container dom对象引用
   // 这里是渲染完后才获取，因此一直有值
   const containerRef = useRef({})
@@ -16,6 +23,11 @@ const EditorPage = (props) => {
     }
   }, [props.value.container.height, props.value.container.width])
 
+  const classes = useMemo(
+    () => ['editor', preview ? 'editor-preview' : null].join(' '),
+    [preview]
+  )
+
   const dragData = useRef({
     dragComponent: null,
   })
@@ -23,14 +35,15 @@ const EditorPage = (props) => {
   const menuDraggier = (() => {
     // 左边的拖拽
     const block = {
-      dragstart: (e, dragComponent) => {
+      dragstart: CallBackRef((e, dragComponent) => {
         containerRef.current.addEventListener('dragenter', container.dragenter)
         containerRef.current.addEventListener('dragover', container.dragover)
         containerRef.current.addEventListener('dragleave', container.dragleave)
         containerRef.current.addEventListener('drop', container.drop)
         dragData.current.dragComponent = dragComponent
-      },
-      dragend: (e) => {
+        dragstart.emit()
+      }),
+      dragend: CallBackRef((e) => {
         containerRef.current.removeEventListener(
           'dragenter',
           container.dragenter
@@ -41,33 +54,30 @@ const EditorPage = (props) => {
           container.dragleave
         )
         containerRef.current.removeEventListener('drop', container.drop)
-      },
+      }),
     }
     // 监听拖拽到容器部分
     const container = {
-      dragenter: (e) => {
-        e.dataTransfer.dropEffect = 'move'
-      },
-      dragover: (e) => {
-        e.preventDefault()
-      },
-      dragleave: (e) => {
-        e.dataTransfer.dropEffect = 'move'
-      },
-      drop: (e) => {
-        // console.log(dragData.current, e.offsetX, e.offsetY)
+      dragenter: CallBackRef((e) => (e.dataTransfer.dropEffect = 'move')),
+      dragover: CallBackRef((e) => e.preventDefault()),
+      dragleave: CallBackRef((e) => (e.dataTransfer.dropEffect = 'none')),
+      drop: CallBackRef((e) => {
+        const { offsetX, offsetY } = e
+        const blocks = [...props.value.blocks]
+        blocks.push(
+          createEditorBlock({
+            top: offsetY,
+            left: offsetX,
+            component: dragData.current.dragComponent,
+          })
+        )
         props.onChange({
           ...props.value,
-          blocks: [
-            ...props.value.blocks,
-            createEditorBlock({
-              top: e.offsetY,
-              left: e.offsetX,
-              component: dragData.current.dragComponent,
-            }),
-          ],
+          blocks,
         })
-      },
+        // console.log(dragData.current, e.offsetX, e.offsetY)
+        setTimeout(() => dragend.emit())
+      }),
     }
     return block
   })()
@@ -108,6 +118,9 @@ const EditorPage = (props) => {
   const focusHandler = (() => {
     //点击block元素的动作
     const block = (e, block) => {
+      if (preview) {
+        return
+      }
       //按住shift键后的效果，实现多选
       if (e.shiftKey) {
         if (focusData.focus.length <= 1) {
@@ -126,6 +139,9 @@ const EditorPage = (props) => {
     }
     //点击容器
     const container = (e) => {
+      if (preview) {
+        return
+      }
       //排除点击到block元素
       if (e.target !== e.currentTarget) {
         return
@@ -145,6 +161,8 @@ const EditorPage = (props) => {
     startX: 0,
     startY: 0,
     startPosArray: [],
+    //是否处于拖拽状态
+    dragging: false,
   })
   const blockDraggier = (() => {
     const mousedown = (e) => {
@@ -155,6 +173,7 @@ const EditorPage = (props) => {
         startX: e.clientX,
         startY: e.clientY,
         startPosArray: focusData.focus.map(({ top, left }) => ({ top, left })),
+        dragging: false,
       }
     }
     const mousemove = (e) => {
@@ -163,15 +182,23 @@ const EditorPage = (props) => {
       const durX = moveX - startX
       const durY = moveY - startY
       focusData.focus.forEach((block, index) => {
+        // console.log(startPosArray[index])
         const { top, left } = startPosArray[index]
         block.top = top + durY
         block.left = left + durX
       })
       methods.updateBlocks(props.value.blocks)
+      if (!blockDragData.current.dragging) {
+        blockDragData.current.dragging = true
+        dragstart.emit()
+      }
     }
     const mouseup = (e) => {
       document.removeEventListener('mousemove', mousemove)
       document.removeEventListener('mouseup', mouseup)
+      if (blockDragData.current.dragging) {
+        dragend.emit()
+      }
     }
     return { mousedown }
   })()
@@ -179,28 +206,30 @@ const EditorPage = (props) => {
   /**
    * header的功能选项按钮
    **/
-  //当前的预览状态
-  const [preview, setPreview] = useState(false)
-  //当前的编辑状态
-  const [editing, setEditing] = useState(false)
+  //监听者模式，添加开始和结束的监听，完善回退和前进操作
+  const [dragstart] = useState(() => createEvent())
+  const [dragend] = useState(() => createEvent())
+
   //命令管理
   const commander = useEidtorCommand({
     value: props.value,
     focusData,
     updateBlocks: methods.updateBlocks,
+    dragstart,
+    dragend,
   })
 
   const buttons = [
     {
       label: '撤销',
       icon: 'icon-back',
-      handler: () => commander.undo(),
+      handler: commander.undo,
       tip: 'ctrl+z',
     },
     {
       label: '重做',
       icon: 'icon-forward',
-      handler: () => commander.redo(),
+      handler: commander.redo,
       tip: 'ctrl+y, ctri+shift+z',
     },
     {
@@ -226,13 +255,13 @@ const EditorPage = (props) => {
     {
       label: '置顶',
       icon: 'icon-place-top',
-      handler: () => {},
+      handler: commander.placeTop,
       tip: 'ctrl+up',
     },
     {
       label: '置底',
       icon: 'icon-place-bottom',
-      handler: () => {},
+      handler: commander.placeBottom,
       tip: 'ctrl+down',
     },
     {
@@ -241,19 +270,21 @@ const EditorPage = (props) => {
       handler: commander.delete,
       tip: 'ctrl+d, backspace, delete',
     },
-    { label: '清空', icon: 'icon-reset', handler: () => {} },
+    { label: '清空', icon: 'icon-reset', handler: commander.clear },
     {
       label: '关闭',
       icon: 'icon-close',
       handler: () => {
         methods.clearFocus()
         setEditing(false)
+        //回头改成跳转到展示部分
+        props.history.push('/')
       },
     },
   ]
 
   return (
-    <div className='editor'>
+    <div className={classes}>
       <div className='editor-menu'>
         {props.config.componentArray.map((component, index) => (
           <div
@@ -268,44 +299,38 @@ const EditorPage = (props) => {
           </div>
         ))}
       </div>
-      <div className='editor-content'>
-        <div className='editor-content-head'>
-          {buttons.map((btn, index) => {
-            const label =
-              typeof btn.label === 'function' ? btn.label() : btn.label
-            const icon = typeof btn.icon === 'function' ? btn.icon() : btn.icon
-            return (
-              <div
-                className='editor-content-head-btn'
-                key={index}
-                onClick={btn.handler}
-              >
-                <i className={`iconfont ${icon}`} />
-                <span>{label}</span>
-              </div>
-            )
-          })}
-        </div>
-        <div className='editor-content-body'>
-          <div
-            className='editor-container'
-            style={containerStyles}
-            ref={containerRef}
-            onMouseDown={focusHandler.container}
-          >
-            {props.value.blocks.map((block, index) => (
-              <EditorBlock
-                key={index}
-                block={block}
-                config={props.config}
-                onMouseDown={(e) => focusHandler.block(e, block)}
-              />
-            ))}
-          </div>
+      <div className='editor-head'>
+        {buttons.map((btn, index) => {
+          const label =
+            typeof btn.label === 'function' ? btn.label() : btn.label
+          const icon = typeof btn.icon === 'function' ? btn.icon() : btn.icon
+          return (
+            <div className='editor-head-btn' key={index} onClick={btn.handler}>
+              <i className={`iconfont ${icon}`} />
+              <span>{label}</span>
+            </div>
+          )
+        })}
+      </div>
+      <div className='editor-body'>
+        <div
+          className='editor-container'
+          style={containerStyles}
+          ref={containerRef}
+          onMouseDown={focusHandler.container}
+        >
+          {props.value.blocks.map((block, index) => (
+            <EditorBlock
+              key={index}
+              block={block}
+              config={props.config}
+              onMouseDown={(e) => focusHandler.block(e, block)}
+            />
+          ))}
         </div>
       </div>
       <div className='editor-operator'>operator</div>
     </div>
   )
 }
-export default EditorPage
+export default withRouter(EditorPage)

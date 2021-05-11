@@ -7,7 +7,7 @@ const Editor = () => {
   const [editorValue, setEditorValue] = useState(() => {
     const val = {
       container: {
-        height: 400,
+        height: 500,
         width: 700,
       },
       blocks: [
@@ -17,6 +17,7 @@ const Editor = () => {
           left: 100,
           adjustPosition: false,
           focus: false,
+          zIndex: 0,
         },
         // {
         //   componentKey: 'linechart',

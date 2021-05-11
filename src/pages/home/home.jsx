@@ -4,7 +4,6 @@ import { Layout, Breadcrumb } from 'antd'
 import Header from '../../components/header'
 import memoryUtils from '../../utils/memoryUtils'
 import './home.less'
-import Editor from '../editor/editor'
 import DashBoard from '../dashboard/dashboard'
 import User from '../user/user'
 
@@ -25,7 +24,7 @@ class Dashboard extends React.Component {
     //console.log(path)
     const breadcrumbNameMap = {
       '/dashboard': '展示',
-      '/editor': '编辑',
+      // '/editor': '编辑',
       //'/manage': '管理',
       '/manage/user': '用户管理',
     }
@@ -47,7 +46,7 @@ class Dashboard extends React.Component {
             <Content className='layout-content'>
               <Switch>
                 <Route path='/dashboard' component={DashBoard} />
-                <Route path='/editor' component={Editor} />
+                {/* <Route path='/editor' component={Editor} /> */}
                 <Route path='/manage/user' component={User} />
                 <Redirect to='/dashboard' />
               </Switch>

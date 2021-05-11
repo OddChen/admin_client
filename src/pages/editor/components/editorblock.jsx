@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react'
-import { useUpdate } from '../hook/useUpadate'
+import { useUpdate } from '../hooks/useUpadate'
 
 //props: block, config, onMousedown
 export const EditorBlock = (props) => {
@@ -8,9 +8,15 @@ export const EditorBlock = (props) => {
     return {
       top: `${props.block.top}px`,
       left: `${props.block.left}px`,
+      zIndex: props.block.zIndex,
       opacity: props.block.adjustPosition ? '0' : '',
     }
-  }, [props.block.top, props.block.left, props.block.adjustPosition])
+  }, [
+    props.block.top,
+    props.block.left,
+    props.block.zIndex,
+    props.block.adjustPosition,
+  ])
   //添加选中边框样式
   const classes = useMemo(
     () =>

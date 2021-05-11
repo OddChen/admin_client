@@ -12,6 +12,7 @@
     "customize-cra": "^1.0.0",
     "deepcopy": "^2.1.0",
     "echarts": "^5.0.2",
+    "echarts-gl": "^2.0.4",
     "less": "^4.0.0",
     "less-loader": "^5.0.0",
     "react": "^17.0.1",

@@ -28,7 +28,7 @@ export function useCommander() {
       }
       state.commandArray.push(commandRef)
       state.commands[command.name] = (...args) => {
-        const { redo, undo } = commandRef.current.execute(...args)
+        const { undo, redo } = commandRef.current.execute(...args)
         redo()
         //不需要进入命令队列就直接结束
         if (commandRef.current.followQueue === false) {
@@ -40,7 +40,7 @@ export function useCommander() {
           queue = queue.slice(0, current + 1)
           state.queue = queue
         }
-        //设置队列中最后一个命令为当前命令
+        //设置队列中最新的一个命令为当前命令
         queue.push({ undo, redo })
         //索引加一
         state.current = current + 1
@@ -48,6 +48,7 @@ export function useCommander() {
     })
   }
 
+  //键盘操作
   const [keyboardEvent] = useState(() => {
     const onKeydown = (e) => {
       if (document.activeElement !== document.body) {
@@ -111,7 +112,6 @@ export function useCommander() {
               return
             }
             const queueItem = state.queue[state.current]
-            // console.log('queueItem',queueItem)
             if (!!queueItem) {
               !!queueItem.undo && queueItem.undo()
               state.current--

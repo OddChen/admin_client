@@ -11,6 +11,221 @@
 @primary: #409eff; //基础色
 
 .editor {
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  border: solid 20px #f0f2f5;
+
+  .editor-head,
+  .editor-body,
+  .editor-menu,
+  .editor-operator {
+    position: absolute;
+
+    //滚动条样式
+    &::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 1em;
+      background-color: rgba(black, 0.15);
+    }
+
+    &::-webkit-scrollbar-track {
+      border-radius: 1em;
+      background-color: transparent;
+    }
+  }
+
+  .editor-menu {
+    box-sizing: border-box;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: @menuSize;
+    background-color: #fff;
+    padding: 20px;
+    border: solid 1px @ibc;
+
+    .editor-menu-item {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 50px;
+      border: solid 2px @ibc;
+      padding: 20px 16px;
+      margin-bottom: 20px;
+      box-sizing: border-box;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+
+      &:hover {
+        border-color: @primary;
+        cursor: move;
+      }
+    }
+
+    .editor-menu-item-name {
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      padding: 2px 16px;
+      background-color: @primary;
+      color: white;
+      font-size: 12px;
+    }
+  }
+
+  .editor-operator {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: @operatorSize;
+    padding: 20px;
+    background-color: #fff;
+    border: solid 1px @ibc;
+    box-sizing: border-box;
+  }
+
+  .editor-body {
+    display: flex;
+    justify-content: center;
+    top: 0;
+    right: @operatorSize;
+    bottom: 0;
+    left: @menuSize;
+    padding-top: @headSize + 20px;
+    padding-bottom: 300px;
+    background-color: @ibl;
+    overflow-y: auto;
+  }
+
+  .editor-head {
+    display: flex;
+    justify-content: center;
+    top: 0;
+    right: @operatorSize;
+    left: @menuSize;
+    height: @headSize;
+    padding: 10px 0;
+    z-index: 1;
+
+    .editor-head-btn {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(64, 158, 255);
+      color: white;
+      width: 60px;
+      height: 60px;
+      transition: all 0.1s linear;
+      cursor: pointer;
+      user-select: none;
+
+      &:first-child {
+        border-radius: 5px 0 0 5px;
+      }
+      &:last-child {
+        border-radius: 0 5px 5px 0;
+      }
+
+      &:not(:first-child) {
+        &::after {
+          content: '';
+          position: absolute;
+          left: -0.5px;
+          width: 1px;
+          top: 0;
+          bottom: 0;
+          background-color: rgba(255, 255, 255, 0.5);
+        }
+      }
+
+      &:hover {
+        background-color: white;
+        color: @primary;
+      }
+
+      &:active {
+        background-color: mix(@primary, white, 20%);
+      }
+    }
+  }
+
+  .editor-container {
+    position: relative;
+    background-color: #fff;
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      border: dashed 1px @primary;
+      pointer-events: none;
+    }
+
+    .editor-block {
+      position: absolute;
+      background-color: #fff;
+      user-select: none;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        cursor: move;
+      }
+    }
+
+    .editor-block-focus {
+      &::before {
+        content: '';
+        position: absolute;
+        @size: 4px;
+        top: -@size;
+        right: -@size;
+        bottom: -@size;
+        left: -@size;
+        border: dashed 1px @primary;
+      }
+    }
+  }
+
+  &.editor-preview {
+    .editor-container {
+      &::before {
+        display: none;
+      }
+      .editor-block {
+        &::after {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+/**
+.editor {
   height: 540px;
   display: flex;
   flex-direction: row;
@@ -87,6 +302,7 @@
     flex-grow: 1;
     background-color: @ibl;
     justify-content: flex-start;
+
     .editor-content-head {
       display: flex;
       justify-content: center;
@@ -175,3 +391,4 @@
     background-color: #c9f357;
   }
 }
+*/
