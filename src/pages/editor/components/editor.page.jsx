@@ -5,24 +5,29 @@ import '../iconfont/iconfont.css'
 import { useEidtorCommand } from './editor.commander'
 import { createEvent } from '../plugins/event'
 import { CallBackRef } from '../hooks/CallbackRef'
-import { Route, withRouter } from 'react-router'
+import { withRouter } from 'react-router'
+import { dialog } from '../service/dialog/dialog'
+import { notification } from 'antd'
 
 const EditorPage = (props) => {
   //当前的预览状态
   const [preview, setPreview] = useState(false)
   //当前的编辑状态
   const [editing, setEditing] = useState(false)
+
   // container dom对象引用
   // 这里是渲染完后才获取，因此一直有值
   const containerRef = useRef({})
   //container对象样式
   const containerStyles = useMemo(() => {
+    // console.log(props.value)
     return {
       height: `${props.value.container.height}px`,
       width: `${props.value.container.width}px`,
     }
   }, [props.value.container.height, props.value.container.width])
 
+  //编辑和预览状态的样式
   const classes = useMemo(
     () => ['editor', preview ? 'editor-preview' : null].join(' '),
     [preview]
@@ -96,6 +101,7 @@ const EditorPage = (props) => {
   }, [props.value.blocks])
 
   //对外暴露的方法，重新渲染和清除未选项边框
+  //导入新的数据
   const methods = {
     // 更新blocks，重新渲染
     updateBlocks: (blocks) => {
@@ -112,6 +118,10 @@ const EditorPage = (props) => {
       ).forEach((block) => {
         block.focus = false
       }, methods.updateBlocks(props.value.blocks)),
+    //导入新的数据后重新渲染
+    updateValue: (value) => {
+      props.onChange({ ...value })
+    },
   }
 
   //处理block元素的选中事件
@@ -215,6 +225,7 @@ const EditorPage = (props) => {
     value: props.value,
     focusData,
     updateBlocks: methods.updateBlocks,
+    updateValue: methods.updateValue,
     dragstart,
     dragend,
   })
@@ -245,12 +256,33 @@ const EditorPage = (props) => {
     {
       label: '导入',
       icon: 'icon-import',
-      handler: () => {},
+      handler: async () => {
+        const text = await dialog.textarea('', {
+          title: '请选择要导入的方案',
+        })
+        // console.log(text)
+        try {
+          const data = JSON.parse(text || '')
+          // console.log(data)
+          commander.updateValue(data)
+        } catch (e) {
+          console.error(e)
+          notification.open({
+            message: '导入失败',
+            description: '导入数据的格式不正常，请检查！',
+          })
+        }
+      },
     },
     {
       label: '导出',
       icon: 'icon-export',
-      handler: () => {},
+      handler: () => {
+        dialog.textarea(JSON.stringify(props.value), {
+          editReadonly: true,
+          title: '导出设计方案',
+        })
+      },
     },
     {
       label: '置顶',

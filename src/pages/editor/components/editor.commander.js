@@ -6,6 +6,7 @@ export function useEidtorCommand({
   value,
   focusData,
   updateBlocks,
+  updateValue,
   dragstart,
   dragend,
 }) {
@@ -182,6 +183,24 @@ export function useEidtorCommand({
     },
   })
 
+  //导入
+  commander.Registry({
+    name: 'updateValue',
+    execute: (newVal) => {
+      const before = deepcopy(value)
+      const after = deepcopy(newVal)
+      // console.log(before, after)
+      return {
+        redo: () => {
+          updateValue(deepcopy(after))
+        },
+        undo: () => {
+          updateValue(deepcopy(before))
+        },
+      }
+    },
+  })
+
   //初始化生成默认的undo和redo
   commander.useInit()
 
@@ -192,5 +211,6 @@ export function useEidtorCommand({
     clear: () => commander.state.commands.clear(),
     placeTop: () => commander.state.commands.placeTop(),
     placeBottom: () => commander.state.commands.placeBottom(),
+    updateValue: (newVal) => commander.state.commands.updateValue(newVal),
   }
 }

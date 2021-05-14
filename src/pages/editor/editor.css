@@ -183,6 +183,9 @@
 .editor.editor-preview .editor-container::before {
   display: none;
 }
+.editor.editor-preview .editor-container .editor-block {
+  user-select: auto;
+}
 .editor.editor-preview .editor-container .editor-block::after {
   display: none;
 }
