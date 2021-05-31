@@ -16,7 +16,7 @@
   right: 0px;
   bottom: 0px;
   left: 0px;
-  border: solid 20px #f0f2f5;
+  // border: solid 20px #f0f2f5;
 
   .editor-head,
   .editor-body,
@@ -117,6 +117,7 @@
     justify-content: center;
     top: 0;
     right: @operatorSize;
+    // bottom: 0;
     left: @menuSize;
     height: @headSize;
     padding: 10px 0;
@@ -221,6 +222,24 @@
           display: none;
         }
       }
+    }
+  }
+
+  .editor-mark-x,
+  .editor-mark-y {
+    position: absolute;
+
+    &.editor-mark-x {
+      top: 0;
+      bottom: 0;
+      left: 20px;
+      border-left: dashed 1px @primary;
+    }
+    &.editor-mark-y {
+      top: 20px;
+      right: 0;
+      left: 0;
+      border-top: dashed 1px @primary;
     }
   }
 }

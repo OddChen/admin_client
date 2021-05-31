@@ -1,0 +1,36 @@
+{
+  "container": {
+    "height": 500,
+    "width": 700
+  },
+  "blocks": [
+    {
+      "componentKey": "linechart",
+      "top": 20,
+      "left": 20,
+      "adjustPosition": false,
+      "focus": false,
+      "zIndex": 0
+    },
+    {
+      "componentKey": "bar3d",
+      "top": 180.00001525878906,
+      "left": 374.00001525878906,
+      "adjustPosition": false,
+      "focus": false,
+      "zIndex": 0,
+      "width": 300,
+      "height": 300
+    },
+    {
+      "componentKey": "bingtu",
+      "top": 194.10924434661865,
+      "left": 523.6239500045776,
+      "adjustPosition": false,
+      "focus": false,
+      "zIndex": 0,
+      "width": 23,
+      "height": 22
+    }
+  ]
+}

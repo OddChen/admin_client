@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import ReactDom from 'react-dom'
-import './dialog.less'
+// import './dialog.less'
 import { Modal, Button, Input, message } from 'antd'
 import { defer } from '../../utils/defer'
 
@@ -10,6 +10,7 @@ const DialogService = (() => {
     if (!ins) {
       const el = document.createElement('div')
       document.body.appendChild(el)
+
       const Service = (props) => {
         const [option, setOption] = useState(props.option)
         const [showFlag, setShowFlag] = useState(false)

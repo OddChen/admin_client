@@ -4,7 +4,6 @@
   right: 0px;
   bottom: 0px;
   left: 0px;
-  border: solid 20px #f0f2f5;
 }
 .editor .editor-head,
 .editor .editor-body,
@@ -188,6 +187,24 @@
 }
 .editor.editor-preview .editor-container .editor-block::after {
   display: none;
+}
+.editor .editor-mark-x,
+.editor .editor-mark-y {
+  position: absolute;
+}
+.editor .editor-mark-x.editor-mark-x,
+.editor .editor-mark-y.editor-mark-x {
+  top: 0;
+  bottom: 0;
+  left: 20px;
+  border-left: dashed 1px #409eff;
+}
+.editor .editor-mark-x.editor-mark-y,
+.editor .editor-mark-y.editor-mark-y {
+  top: 20px;
+  right: 0;
+  left: 0;
+  border-top: dashed 1px #409eff;
 }
 /**
 .editor {

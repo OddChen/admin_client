@@ -37,8 +37,8 @@ const EditorPage = (props) => {
     dragComponent: null,
   })
   //拖拽处理逻辑
+  // 左边菜单的拖拽
   const menuDraggier = (() => {
-    // 左边的拖拽
     const block = {
       dragstart: CallBackRef((e, dragComponent) => {
         containerRef.current.addEventListener('dragenter', container.dragenter)
@@ -145,7 +145,7 @@ const EditorPage = (props) => {
           methods.clearFocus(block)
         }
       }
-      blockDraggier.mousedown(e)
+      blockDraggier.mousedown(e, block)
     }
     //点击容器
     const container = (e) => {
@@ -166,29 +166,146 @@ const EditorPage = (props) => {
     }
   })()
 
-  //拖拽所有被选中的block
+  /*
+   *拖拽所有被选中的block
+   */
+  //标准线
+  const [mark, setMark] = useState({ x: null, y: null })
+
+  //拖拽数据
   const blockDragData = useRef({
+    //鼠标的开始位置
     startX: 0,
     startY: 0,
+    //block的开始位置
+    startLeft: 0,
+    startTop: 0,
+    //所有block的开始位置
     startPosArray: [],
     //是否处于拖拽状态
     dragging: false,
+    markLines: {
+      x: [],
+      y: [],
+    },
   })
+
+  //拖拽操作
   const blockDraggier = (() => {
-    const mousedown = (e) => {
+    const mousedown = (e, block) => {
       document.addEventListener('mousemove', mousemove)
       document.addEventListener('mouseup', mouseup)
+      // console.log(block)
       //当前鼠标位置以及所有被选中元素的位置
       blockDragData.current = {
         startX: e.clientX,
         startY: e.clientY,
+        startLeft: block.left,
+        startTop: block.top,
         startPosArray: focusData.focus.map(({ top, left }) => ({ top, left })),
         dragging: false,
+        markLines: (() => {
+          const x = []
+          const y = []
+          const { unfocus } = focusData
+          unfocus.forEach((b) => {
+            //b:作为对齐标准的block属性, top，left:拖拽的block位置, showTop,showLeft:标线位置
+            //两个block顶部对齐
+            y.push({ top: b.top, showTop: b.top })
+            //中间对齐
+            y.push({
+              top: b.top + b.height / 2 - block.height / 2,
+              showTop: b.top + b.height / 2,
+            })
+            //底部对齐
+            y.push({
+              top: b.top + b.height - block.height,
+              showTop: b.top + b.height,
+            })
+            //底部对齐顶部
+            y.push({
+              top: b.top - block.height,
+              showTop: b.top,
+            })
+            //顶部对齐底部
+            y.push({
+              top: b.top + b.height,
+              showTop: b.top + b.height,
+            })
+
+            //两个block左侧对齐
+            x.push({ left: b.left, showLeft: b.left })
+            //中间对齐
+            x.push({
+              left: b.left + b.width / 2 - block.height / 2,
+              showLeft: b.left + b.width / 2,
+            })
+            //右侧对齐
+            x.push({
+              left: b.left + b.width - block.width,
+              showLeft: b.left + b.width,
+            })
+            //右侧对齐左侧
+            x.push({
+              left: b.left - block.width,
+              showLeft: b.left,
+            })
+            //左侧对齐右侧
+            x.push({
+              left: b.left + b.width,
+              showLeft: b.left + b.width,
+            })
+          })
+
+          return { x, y }
+        })(),
       }
     }
+
     const mousemove = (e) => {
-      const { startX, startY, startPosArray } = blockDragData.current
-      const { clientX: moveX, clientY: moveY } = e
+      if (!blockDragData.current.dragging) {
+        blockDragData.current.dragging = true
+        dragstart.emit()
+      }
+      const { startX, startY, startPosArray, markLines, startTop, startLeft } =
+        blockDragData.current
+      let { clientX: moveX, clientY: moveY } = e
+
+      //按着shift的情况下只能垂直和水平移动
+      if (e.shiftKey) {
+        if (Math.abs(moveX - startX) > Math.abs(moveY - startY)) {
+          moveY = startY
+        } else {
+          moveX = startX
+        }
+      }
+      // console.log(startTop, moveY, startY)
+      //设置标线
+      const now = {
+        mark: {
+          x: null,
+          y: null,
+        },
+        top: startTop + moveY - startY,
+        left: startLeft + moveX - startX,
+      }
+
+      for (let i = 0; i < markLines.y.length; i++) {
+        const { top, showTop } = markLines.y[i]
+        if (Math.abs(now.top - top) < 5) {
+          moveY = top + startY - startTop
+          now.mark.y = showTop
+        }
+      }
+      for (let i = 0; i < markLines.x.length; i++) {
+        const { left, showLeft } = markLines.x[i]
+        if (Math.abs(now.left - left) < 5) {
+          moveX = left + startX - startLeft
+          now.mark.x = showLeft
+        }
+      }
+
+      //移动block位置
       const durX = moveX - startX
       const durY = moveY - startY
       focusData.focus.forEach((block, index) => {
@@ -197,20 +314,22 @@ const EditorPage = (props) => {
         block.top = top + durY
         block.left = left + durX
       })
+      // console.log(now.mark)
+      setMark(now.mark)
       methods.updateBlocks(props.value.blocks)
-      if (!blockDragData.current.dragging) {
-        blockDragData.current.dragging = true
-        dragstart.emit()
-      }
     }
+
     const mouseup = (e) => {
       document.removeEventListener('mousemove', mousemove)
       document.removeEventListener('mouseup', mouseup)
+      //清除标线
+      setMark({ x: null, y: null })
+
       if (blockDragData.current.dragging) {
         dragend.emit()
       }
     }
-    return { mousedown }
+    return { mousedown, mark }
   })()
 
   /**
@@ -230,6 +349,7 @@ const EditorPage = (props) => {
     dragend,
   })
 
+  //header栏按钮和命令
   const buttons = [
     {
       label: '撤销',
@@ -309,6 +429,7 @@ const EditorPage = (props) => {
       handler: () => {
         methods.clearFocus()
         setEditing(false)
+
         //回头改成跳转到展示部分
         props.history.push('/')
       },
@@ -359,6 +480,18 @@ const EditorPage = (props) => {
               onMouseDown={(e) => focusHandler.block(e, block)}
             />
           ))}
+          {blockDraggier.mark.x !== null && (
+            <div
+              className='editor-mark-x'
+              style={{ left: `${blockDraggier.mark.x}px` }}
+            ></div>
+          )}
+          {blockDraggier.mark.y !== null && (
+            <div
+              className='editor-mark-y'
+              style={{ top: `${blockDraggier.mark.y}px` }}
+            ></div>
+          )}
         </div>
       </div>
       <div className='editor-operator'>operator</div>
