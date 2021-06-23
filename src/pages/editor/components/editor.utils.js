@@ -40,5 +40,7 @@ export function createEditorBlock({ top, left, component }) {
     zIndex: 0,
     width: 0,
     height: 0,
+    //是否调整过大小
+    hasResize: false,
   }
 }

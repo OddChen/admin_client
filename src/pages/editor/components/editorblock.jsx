@@ -28,11 +28,24 @@ export const EditorBlock = (props) => {
 
   const component = props.config.componentMap[props.block.componentKey]
   let render
-
   if (!!component) {
     // 设置随机id，防止渲染冲突
     const randomid = component.key + Math.floor(Math.random() * 10000)
-    render = component.render(randomid)
+    let size =
+      props.block.hasResize && component.resize
+        ? (() => {
+            let style = {
+              height: undefined | '',
+              width: undefined | '',
+            }
+            !!component.resize.width && (style.width = `${props.block.width}px`)
+            !!component.resize.height &&
+              (style.height = `${props.block.height}px`)
+            return style
+          })()
+        : { width: props.block.width, height: props.block.height }
+    // console.log(size)
+    render = component.render(randomid, size)
   }
 
   // 重新渲染当前组件
@@ -60,6 +73,7 @@ export const EditorBlock = (props) => {
       onMouseDown={props.onMouseDown}
     >
       {render}
+      {props.children}
     </div>
   )
 }

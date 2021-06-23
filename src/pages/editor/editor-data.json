@@ -10,7 +10,9 @@
       "left": 20,
       "adjustPosition": false,
       "focus": false,
-      "zIndex": 0
+      "zIndex": 0,
+      "width": 200,
+      "height": 200
     },
     {
       "componentKey": "bar3d",

@@ -5,9 +5,18 @@ import Bar3D from '../../../components/charts/bar3D'
 export const editorConfig = createEditorConfig()
 
 editorConfig.registryComponent('bingtu', {
-  name: 'test',
-  preview: () => <span>测试内容</span>,
-  render: (randomid) => <span id={randomid}>test</span>,
+  name: '文本',
+  preview: () => <span>文字描述</span>,
+  //size:{height, width}
+  render: (randomid, size) => (
+    <p id={randomid} style={size}>
+      test
+    </p>
+  ),
+  resize: {
+    height: false,
+    width: true,
+  },
 })
 
 editorConfig.registryComponent('linechart', {
@@ -15,11 +24,20 @@ editorConfig.registryComponent('linechart', {
   // preview: () => <LineExample id='linepre' />,
   //换成图片
   preview: () => <span>折线图</span>,
-  render: (randomid) => <LineExample id={randomid} />,
+  render: (randomid, size) => <LineExample id={randomid} size={size} />,
+  //是否可以拖拽宽高
+  resize: {
+    height: true,
+    width: true,
+  },
 })
 
 editorConfig.registryComponent('bar3d', {
   name: '3D柱状图',
   preview: () => <span>3D柱状图</span>,
-  render: (randomid) => <Bar3D id={randomid} />,
+  render: (randomid, size) => <Bar3D id={randomid} size={size} />,
+  resize: {
+    height: true,
+    width: true,
+  },
 })

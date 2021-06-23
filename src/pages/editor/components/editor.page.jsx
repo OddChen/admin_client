@@ -1,23 +1,35 @@
 import React, { useRef, useMemo, useState } from 'react'
+import '../iconfont/iconfont.css'
 import { createEditorBlock } from './editor.utils'
 import { EditorBlock } from './editorblock'
-import '../iconfont/iconfont.css'
 import { useEidtorCommand } from './editor.commander'
+import { EditorResize, EditorResizeDirector } from './editor.resize'
 import { createEvent } from '../plugins/event'
 import { CallBackRef } from '../hooks/CallbackRef'
 import { withRouter } from 'react-router'
 import { dialog } from '../service/dialog/dialog'
 import { notification } from 'antd'
+import deepcopy from 'deepcopy'
+import { EditorOperator } from './editoroperator'
 
 const EditorPage = (props) => {
   //当前的预览状态
   const [preview, setPreview] = useState(false)
   //当前的编辑状态
   const [editing, setEditing] = useState(false)
+  //当前选中block的index
+  const [selectIndex, setSelectIndex] = useState(-1)
+
+  const selectBlock = useMemo(
+    () => props.value.blocks[selectIndex],
+    [props.value.blocks, selectIndex]
+  )
 
   // container dom对象引用
   // 这里是渲染完后才获取，因此一直有值
   const containerRef = useRef({})
+  const bodyRef = useRef({})
+
   //container对象样式
   const containerStyles = useMemo(() => {
     // console.log(props.value)
@@ -33,11 +45,11 @@ const EditorPage = (props) => {
     [preview]
   )
 
+  //拖拽处理逻辑
+  // 左边菜单的拖拽
   const dragData = useRef({
     dragComponent: null,
   })
-  //拖拽处理逻辑
-  // 左边菜单的拖拽
   const menuDraggier = (() => {
     const block = {
       dragstart: CallBackRef((e, dragComponent) => {
@@ -127,7 +139,8 @@ const EditorPage = (props) => {
   //处理block元素的选中事件
   const focusHandler = (() => {
     //点击block元素的动作
-    const block = (e, block) => {
+    const block = (e, block, index) => {
+      // console.log(block)
       if (preview) {
         return
       }
@@ -145,7 +158,11 @@ const EditorPage = (props) => {
           methods.clearFocus(block)
         }
       }
-      blockDraggier.mousedown(e, block)
+
+      setSelectIndex(block.focus ? index : -1)
+      setTimeout(() => {
+        blockDraggier.mousedown(e, block)
+      })
     }
     //点击容器
     const container = (e) => {
@@ -158,6 +175,7 @@ const EditorPage = (props) => {
       }
       if (!e.shiftKey) {
         methods.clearFocus()
+        setSelectIndex(-1)
       }
     }
     return {
@@ -171,12 +189,13 @@ const EditorPage = (props) => {
    */
   //标准线
   const [mark, setMark] = useState({ x: null, y: null })
-
   //拖拽数据
   const blockDragData = useRef({
     //鼠标的开始位置
     startX: 0,
     startY: 0,
+    //是否按住了shift
+    shiftKey: false,
     //block的开始位置
     startLeft: 0,
     startTop: 0,
@@ -188,18 +207,94 @@ const EditorPage = (props) => {
       x: [],
       y: [],
     },
+    //鼠标在拖拽过程中的位置
+    moveX: 0,
+    moveY: 0,
+    //滚动条
+    body: {
+      startScrollTop: 0,
+      moveScrollTop: 0,
+    },
   })
-
-  //拖拽操作
+  //拖拽移动操作
   const blockDraggier = (() => {
+    const handleMove = CallBackRef((e) => {
+      if (!blockDragData.current.dragging) {
+        blockDragData.current.dragging = true
+        dragstart.emit()
+      }
+      let {
+        moveX,
+        moveY,
+        body,
+        shiftKey,
+        startX,
+        startY,
+        startPosArray,
+        markLines,
+        startTop,
+        startLeft,
+      } = blockDragData.current
+      // let { clientX: moveX, clientY: moveY } = e
+      moveY = moveY + (body.moveScrollTop - body.startScrollTop)
+      //按着shift的情况下只能垂直和水平移动
+      if (shiftKey) {
+        if (Math.abs(moveX - startX) > Math.abs(moveY - startY)) {
+          moveY = startY
+        } else {
+          moveX = startX
+        }
+      }
+      // console.log(startTop, moveY, startY)
+      //设置标线
+      const now = {
+        mark: {
+          x: null,
+          y: null,
+        },
+        top: startTop + moveY - startY,
+        left: startLeft + moveX - startX,
+      }
+
+      for (let i = 0; i < markLines.y.length; i++) {
+        const { top, showTop } = markLines.y[i]
+        if (Math.abs(now.top - top) < 5) {
+          moveY = top + startY - startTop
+          now.mark.y = showTop
+        }
+      }
+      for (let i = 0; i < markLines.x.length; i++) {
+        const { left, showLeft } = markLines.x[i]
+        if (Math.abs(now.left - left) < 5) {
+          moveX = left + startX - startLeft
+          now.mark.x = showLeft
+        }
+      }
+
+      //移动block位置
+      const durX = moveX - startX
+      const durY = moveY - startY
+      focusData.focus.forEach((block, index) => {
+        // console.log(startPosArray[index])
+        const { top, left } = startPosArray[index]
+        block.top = top + durY
+        block.left = left + durX
+      })
+      // console.log(now.mark)
+      setMark(now.mark)
+      methods.updateBlocks(props.value.blocks)
+    })
+
     const mousedown = (e, block) => {
       document.addEventListener('mousemove', mousemove)
       document.addEventListener('mouseup', mouseup)
+      bodyRef.current.addEventListener('scroll', scroll)
       // console.log(block)
       //当前鼠标位置以及所有被选中元素的位置
       blockDragData.current = {
         startX: e.clientX,
         startY: e.clientY,
+        shiftKey: e.shiftKey,
         startLeft: block.left,
         startTop: block.top,
         startPosArray: focusData.focus.map(({ top, left }) => ({ top, left })),
@@ -259,69 +354,25 @@ const EditorPage = (props) => {
 
           return { x, y }
         })(),
+        moveX: e.clientX,
+        moveY: e.clientY,
+        body: {
+          startScrollTop: bodyRef.current.scrollTop,
+          moveScrollTop: bodyRef.current.scrollTop,
+        },
       }
     }
 
     const mousemove = (e) => {
-      if (!blockDragData.current.dragging) {
-        blockDragData.current.dragging = true
-        dragstart.emit()
-      }
-      const { startX, startY, startPosArray, markLines, startTop, startLeft } =
-        blockDragData.current
-      let { clientX: moveX, clientY: moveY } = e
-
-      //按着shift的情况下只能垂直和水平移动
-      if (e.shiftKey) {
-        if (Math.abs(moveX - startX) > Math.abs(moveY - startY)) {
-          moveY = startY
-        } else {
-          moveX = startX
-        }
-      }
-      // console.log(startTop, moveY, startY)
-      //设置标线
-      const now = {
-        mark: {
-          x: null,
-          y: null,
-        },
-        top: startTop + moveY - startY,
-        left: startLeft + moveX - startX,
-      }
-
-      for (let i = 0; i < markLines.y.length; i++) {
-        const { top, showTop } = markLines.y[i]
-        if (Math.abs(now.top - top) < 5) {
-          moveY = top + startY - startTop
-          now.mark.y = showTop
-        }
-      }
-      for (let i = 0; i < markLines.x.length; i++) {
-        const { left, showLeft } = markLines.x[i]
-        if (Math.abs(now.left - left) < 5) {
-          moveX = left + startX - startLeft
-          now.mark.x = showLeft
-        }
-      }
-
-      //移动block位置
-      const durX = moveX - startX
-      const durY = moveY - startY
-      focusData.focus.forEach((block, index) => {
-        // console.log(startPosArray[index])
-        const { top, left } = startPosArray[index]
-        block.top = top + durY
-        block.left = left + durX
-      })
-      // console.log(now.mark)
-      setMark(now.mark)
-      methods.updateBlocks(props.value.blocks)
+      blockDragData.current.moveX = e.clientX
+      blockDragData.current.moveY = e.clientY
+      handleMove()
     }
 
     const mouseup = (e) => {
       document.removeEventListener('mousemove', mousemove)
       document.removeEventListener('mouseup', mouseup)
+      bodyRef.current.removeEventListener('scroll', scroll)
       //清除标线
       setMark({ x: null, y: null })
 
@@ -329,7 +380,103 @@ const EditorPage = (props) => {
         dragend.emit()
       }
     }
+
+    const scroll = CallBackRef((e) => {
+      blockDragData.current.body.moveScrollTop = e.target.scrollTop
+      handleMove()
+    })
+
     return { mousedown, mark }
+  })()
+
+  //拖拽调整block大小
+  const resizeData = useRef({
+    block: {},
+    startX: 0,
+    startY: 0,
+    direction: {
+      horizontal: EditorResizeDirector.start,
+      vertical: EditorResizeDirector.start,
+    },
+    startBlock: {
+      top: 0,
+      left: 0,
+      height: 0,
+      width: 0,
+    },
+    dragging: false,
+  })
+  const resizeDraggier = (() => {
+    //direction: { horizontal, vertical }
+    const mousedown = (e, direction, block) => {
+      e.stopPropagation()
+      document.addEventListener('mousemove', mousemove)
+      document.addEventListener('mouseup', mouseup)
+      resizeData.current = {
+        block,
+        startX: e.clientX,
+        startY: e.clientY,
+        direction,
+        startBlock: {
+          ...deepcopy(block),
+        },
+        dragging: false,
+      }
+    }
+
+    const mousemove = (e) => {
+      if (!resizeData.current.dragging) {
+        resizeData.current.dragging = true
+        dragstart.emit()
+      }
+
+      let { startX, startY, startBlock, direction, block } = resizeData.current
+      let { clientX: moveX, clientY: moveY } = e
+
+      if (direction.horizontal === EditorResizeDirector.center) {
+        moveX = startX
+      }
+      if (direction.vertical === EditorResizeDirector.center) {
+        moveY = startY
+      }
+
+      let durX = moveX - startX
+      let durY = moveY - startY
+      // console.log(durX, durY)
+      // console.log(startBlock)
+      if (direction.vertical === EditorResizeDirector.start) {
+        durY = -durY
+        block.top = startBlock.top - durY
+      }
+      if (direction.horizontal === EditorResizeDirector.start) {
+        durX = -durX
+        block.left = startBlock.left - durX
+      }
+
+      const width = startBlock.width + durX
+      const height = startBlock.height + durY
+      // console.log(width, height)
+      block.width = width
+      block.height = height
+      block.hasResize = true
+      // console.log(block)
+      methods.updateBlocks(props.value.blocks)
+    }
+
+    const mouseup = (e) => {
+      document.removeEventListener('mousemove', mousemove)
+      document.removeEventListener('mouseup', mouseup)
+      //使得echarts组件在拖拽大小后刷新页面
+      setTimeout(() => {
+        buttons[8].handler()
+        methods.updateValue(props.value)
+      }, 10)
+
+      if (resizeData.current.dragging) {
+        setTimeout(dragend.emit)
+      }
+    }
+    return { mousedown }
   })()
 
   /**
@@ -465,7 +612,7 @@ const EditorPage = (props) => {
           )
         })}
       </div>
-      <div className='editor-body'>
+      <div className='editor-body' ref={bodyRef}>
         <div
           className='editor-container'
           style={containerStyles}
@@ -477,8 +624,22 @@ const EditorPage = (props) => {
               key={index}
               block={block}
               config={props.config}
-              onMouseDown={(e) => focusHandler.block(e, block)}
-            />
+              onMouseDown={(e) => focusHandler.block(e, block, index)}
+            >
+              {block.focus &&
+                !!props.config.componentMap[block.componentKey] &&
+                !!props.config.componentMap[block.componentKey].resize &&
+                (props.config.componentMap[block.componentKey].resize.width ||
+                  props.config.componentMap[block.componentKey].resize
+                    .height) && (
+                  <EditorResize
+                    component={props.config.componentMap[block.componentKey]}
+                    onMouseDown={(e, direction) =>
+                      resizeDraggier.mousedown(e, direction, block)
+                    }
+                  />
+                )}
+            </EditorBlock>
           ))}
           {blockDraggier.mark.x !== null && (
             <div
@@ -494,7 +655,7 @@ const EditorPage = (props) => {
           )}
         </div>
       </div>
-      <div className='editor-operator'>operator</div>
+      <EditorOperator selectBlock={selectBlock} value={props.value} />
     </div>
   )
 }

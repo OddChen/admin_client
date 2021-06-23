@@ -26,17 +26,13 @@ class LineExample extends React.Component {
         },
       ],
     }
-
     option && myLineChart.setOption(option)
   }
+
   render() {
-    // console.log(this.props.id)
     return (
       <div>
-        <div
-          id={this.props.id}
-          style={{ height: '200px', width: '200px' }}
-        ></div>
+        <div id={this.props.id} style={this.props.size}></div>
       </div>
     )
   }

@@ -299,17 +299,13 @@ class Bar3D extends React.Component {
         },
       ],
     }
-
     option && myChart.setOption(option)
   }
 
   render() {
     return (
       <div>
-        <div
-          id={this.props.id}
-          style={{ height: '300px', width: '300px' }}
-        ></div>
+        <div id={this.props.id} style={this.props.size}></div>
       </div>
     )
   }

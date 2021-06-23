@@ -208,10 +208,83 @@
         left: -@size;
         border: dashed 1px @primary;
       }
+
+      .editor-block-resize {
+        position: absolute;
+
+        @offset: 6px;
+        @size: 6px;
+
+        &.editor-block-resize-top-left,
+        &.editor-block-resize-top,
+        &.editor-block-resize-top-right,
+        &.editor-block-resize-left,
+        &.editor-block-resize-right,
+        &.editor-block-resize-bottom-left,
+        &.editor-block-resize-bottom,
+        &.editor-block-resize-bottom-right {
+          top: -@offset;
+          right: -@offset;
+          bottom: -@offset;
+          left: -@offset;
+          height: @size;
+          width: @size;
+          background-color: @primary;
+          // user-select: none;
+        }
+
+        &.editor-block-resize-top-left {
+          right: auto;
+          bottom: auto;
+          cursor: nw-resize;
+        }
+        &.editor-block-resize-top {
+          left: calc(50% - @size / 2);
+          right: auto;
+          bottom: auto;
+          cursor: n-resize;
+        }
+        &.editor-block-resize-top-right {
+          left: auto;
+          bottom: auto;
+          cursor: ne-resize;
+        }
+
+        &.editor-block-resize-left {
+          top: calc(50% - @size / 2);
+          right: auto;
+          cursor: w-resize;
+        }
+        &.editor-block-resize-right {
+          top: calc(50% - @size / 2);
+          left: auto;
+          cursor: e-resize;
+        }
+
+        &.editor-block-resize-bottom-left {
+          right: auto;
+          top: auto;
+          cursor: sw-resize;
+        }
+        &.editor-block-resize-bottom {
+          left: calc(50% - @size / 2);
+          right: auto;
+          top: auto;
+          cursor: s-resize;
+        }
+        &.editor-block-resize-bottom-right {
+          left: auto;
+          top: auto;
+          cursor: se-resize;
+        }
+      }
     }
   }
 
   &.editor-preview {
+    .editor-block-resize {
+      display: none;
+    }
     .editor-container {
       &::before {
         display: none;

@@ -34,9 +34,7 @@ export function useEidtorCommand({
   ;(() => {
     const blockDragData = { before: null }
     const handler = {
-      dragstart: CallBackRef(
-        () => (blockDragData.current.before = deepcopy(value.blocks))
-      ),
+      dragstart: () => (blockDragData.current.before = deepcopy(value.blocks)),
       dragend: CallBackRef(() => commander.state.commands.drag()),
     }
 
@@ -52,7 +50,7 @@ export function useEidtorCommand({
         }
       },
       execute() {
-        console.log('拖拽')
+        // console.log('拖拽')
         console.log(blockDragData.current.before, value.blocks)
         let before = deepcopy(blockDragData.current.before)
         let after = deepcopy(value.blocks)
