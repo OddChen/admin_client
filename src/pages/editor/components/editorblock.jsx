@@ -44,8 +44,9 @@ export const EditorBlock = (props) => {
             return style
           })()
         : { width: props.block.width, height: props.block.height }
-    // console.log(size)
-    render = component.render(randomid, size)
+
+    let blockprops = props.block.props || {}
+    render = component.render(randomid, size, blockprops)
   }
 
   // 重新渲染当前组件

@@ -2,6 +2,7 @@ export function createEditorConfig() {
   const componentMap = {}
   const componentArray = []
   // 注册组件
+  //option: {name, preview, render, resize, blockprops}
   function registryComponent(key, option) {
     if (componentMap[key]) {
       const index = componentArray.indexOf(componentMap[key])

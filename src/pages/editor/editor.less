@@ -97,6 +97,12 @@
     background-color: #fff;
     border: solid 1px @ibc;
     box-sizing: border-box;
+
+    .editor-operator-title {
+      font-weight: 700;
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
   }
 
   .editor-body {
@@ -169,7 +175,7 @@
 
   .editor-container {
     position: relative;
-    background-color: #fff;
+    // background-color: #fff;
     &::before {
       content: '';
       position: absolute;
@@ -183,7 +189,7 @@
 
     .editor-block {
       position: absolute;
-      background-color: #fff;
+      background-color: transparent;
       user-select: none;
 
       &::after {

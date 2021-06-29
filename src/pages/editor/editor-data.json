@@ -1,7 +1,8 @@
 {
   "container": {
     "height": 500,
-    "width": 700
+    "width": 700,
+    "background": "#FFF"
   },
   "blocks": [
     {
@@ -25,14 +26,34 @@
       "height": 300
     },
     {
-      "componentKey": "bingtu",
+      "componentKey": "text",
       "top": 194.10924434661865,
       "left": 523.6239500045776,
       "adjustPosition": false,
       "focus": false,
       "zIndex": 0,
-      "width": 23,
-      "height": 22
+      "blockprops": {
+        "text": "模板文本",
+        "color": {
+          "hsl": {
+            "h": 37.42857142857143,
+            "s": 0.9130434782608696,
+            "l": 0.5490196078431373,
+            "a": 1
+          },
+          "hex": "#f5a623",
+          "rgb": { "r": 245, "g": 166, "b": 35, "a": 1 },
+          "hsv": {
+            "h": 37.42857142857143,
+            "s": 0.8571428571428571,
+            "v": 0.9607843137254902,
+            "a": 1
+          },
+          "oldHue": 250,
+          "source": "hex"
+        },
+        "fontsize": "14px"
+      }
     }
   ]
 }

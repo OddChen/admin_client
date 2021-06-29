@@ -84,6 +84,11 @@
   border: solid 1px #dcdfe6;
   box-sizing: border-box;
 }
+.editor .editor-operator .editor-operator-title {
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
 .editor .editor-body {
   display: flex;
   justify-content: center;
@@ -144,7 +149,6 @@
 }
 .editor .editor-container {
   position: relative;
-  background-color: #fff;
 }
 .editor .editor-container::before {
   content: '';
@@ -158,7 +162,7 @@
 }
 .editor .editor-container .editor-block {
   position: absolute;
-  background-color: #fff;
+  background-color: transparent;
   user-select: none;
 }
 .editor .editor-container .editor-block::after {

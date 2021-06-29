@@ -32,7 +32,12 @@ class LineExample extends React.Component {
   render() {
     return (
       <div>
-        <div id={this.props.id} style={this.props.size}></div>
+        <div
+          id={this.props.id}
+          style={
+            this.props.size ? this.props.size : { width: 200, height: 200 }
+          }
+        ></div>
       </div>
     )
   }

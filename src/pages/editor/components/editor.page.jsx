@@ -36,8 +36,13 @@ const EditorPage = (props) => {
     return {
       height: `${props.value.container.height}px`,
       width: `${props.value.container.width}px`,
+      background: `${props.value.container.background}`,
     }
-  }, [props.value.container.height, props.value.container.width])
+  }, [
+    props.value.container.height,
+    props.value.container.width,
+    props.value.container.background,
+  ])
 
   //编辑和预览状态的样式
   const classes = useMemo(
@@ -134,6 +139,12 @@ const EditorPage = (props) => {
     updateValue: (value) => {
       props.onChange({ ...value })
     },
+    flushedValue: () => {
+      setTimeout(() => {
+        commander.clear()
+        methods.updateValue(props.value)
+      }, 10)
+    },
   }
 
   //处理block元素的选中事件
@@ -218,7 +229,7 @@ const EditorPage = (props) => {
   })
   //拖拽移动操作
   const blockDraggier = (() => {
-    const handleMove = CallBackRef((e) => {
+    const handleMove = (e) => {
       if (!blockDragData.current.dragging) {
         blockDragData.current.dragging = true
         dragstart.emit()
@@ -275,7 +286,7 @@ const EditorPage = (props) => {
       const durX = moveX - startX
       const durY = moveY - startY
       focusData.focus.forEach((block, index) => {
-        // console.log(startPosArray[index])
+        // console.log(startPosArray)
         const { top, left } = startPosArray[index]
         block.top = top + durY
         block.left = left + durX
@@ -283,7 +294,7 @@ const EditorPage = (props) => {
       // console.log(now.mark)
       setMark(now.mark)
       methods.updateBlocks(props.value.blocks)
-    })
+    }
 
     const mousedown = (e, block) => {
       document.addEventListener('mousemove', mousemove)
@@ -466,11 +477,8 @@ const EditorPage = (props) => {
     const mouseup = (e) => {
       document.removeEventListener('mousemove', mousemove)
       document.removeEventListener('mouseup', mouseup)
-      //使得echarts组件在拖拽大小后刷新页面
-      setTimeout(() => {
-        buttons[8].handler()
-        methods.updateValue(props.value)
-      }, 10)
+      // 使得echarts组件在拖拽大小后刷新页面
+      methods.flushedValue()
 
       if (resizeData.current.dragging) {
         setTimeout(dragend.emit)
@@ -504,12 +512,12 @@ const EditorPage = (props) => {
       handler: commander.undo,
       tip: 'ctrl+z',
     },
-    {
-      label: '重做',
-      icon: 'icon-forward',
-      handler: commander.redo,
-      tip: 'ctrl+y, ctri+shift+z',
-    },
+    // {
+    //   label: '重做',
+    //   icon: 'icon-forward',
+    //   handler: commander.redo,
+    //   tip: 'ctrl+y, ctri+shift+z',
+    // },
     {
       label: () => (preview ? '编辑' : '预览'),
       icon: () => (preview ? 'icon-edit' : 'icon-browse'),
@@ -569,7 +577,14 @@ const EditorPage = (props) => {
       handler: commander.delete,
       tip: 'ctrl+d, backspace, delete',
     },
-    { label: '清空', icon: 'icon-reset', handler: commander.clear },
+    { label: '清空', icon: 'icon-delete', handler: commander.clear },
+    {
+      label: '刷新',
+      icon: 'icon-reset',
+      handler() {
+        methods.flushedValue()
+      },
+    },
     {
       label: '关闭',
       icon: 'icon-close',
@@ -655,7 +670,13 @@ const EditorPage = (props) => {
           )}
         </div>
       </div>
-      <EditorOperator selectBlock={selectBlock} value={props.value} />
+      <EditorOperator
+        selectBlock={selectBlock}
+        value={props.value}
+        updateValue={methods.updateValue}
+        updateBlocks={methods.updateBlocks}
+        config={props.config}
+      />
     </div>
   )
 }
