@@ -44,11 +44,27 @@ editorConfig.registryComponent('linechart', {
   // preview: () => <LineExample id='linepre' />,
   //换成图片
   preview: () => <span>折线图</span>,
-  render: (randomid, size) => <LineExample id={randomid} size={size} />,
+  render: (randomid, size, blockprops) => (
+    <LineExample id={randomid} size={size} blockprops={blockprops} />
+  ),
   //是否可以拖拽宽高
   resize: {
     height: true,
     width: true,
+  },
+  blockprops: {
+    xAxis_name: createTextProp('x轴名称'),
+    xAxis_position: createSelectProp('x轴位置', [
+      { label: '顶部', value: 'top' },
+      { label: '底部', value: 'bottom' },
+    ]),
+    xAxis_data: createTextProp('x轴数据'),
+    yAxis_name: createTextProp('y轴名称'),
+    series_data: createTextProp('y轴数据'),
+    series_smooth: createSelectProp('平滑曲线', [
+      { label: '是', value: 'true' },
+      { label: '否', value: 'false' },
+    ]),
   },
 })
 

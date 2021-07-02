@@ -308,7 +308,9 @@ class Bar3D extends React.Component {
         <div
           id={this.props.id}
           style={
-            this.props.size ? this.props.size : { width: 300, height: 300 }
+            this.props.size.width
+              ? this.props.size
+              : { width: 300, height: 300 }
           }
         ></div>
       </div>

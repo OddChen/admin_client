@@ -12,6 +12,11 @@ const menuList = [
     icon: <PieChartOutlined />,
   },
   {
+    title: '方案',
+    path: '/editorscheme',
+    icon: <AppstoreOutlined />,
+  },
+  {
     title: '编辑',
     path: '/editor',
     icon: <AppstoreOutlined />,

@@ -553,7 +553,7 @@ const EditorPage = (props) => {
       label: '导出',
       icon: 'icon-export',
       handler: () => {
-        dialog.textarea(JSON.stringify(props.value), {
+        dialog.textarea(props.value, {
           editReadonly: true,
           title: '导出设计方案',
         })
@@ -593,7 +593,7 @@ const EditorPage = (props) => {
         setEditing(false)
 
         //回头改成跳转到展示部分
-        props.history.push('/')
+        props.history.push('/editorscheme')
       },
     },
   ]

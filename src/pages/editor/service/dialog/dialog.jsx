@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import ReactDom from 'react-dom'
 // import './dialog.less'
-import { Modal, Button, Input, message } from 'antd'
+import { Modal, Button, Input, message, Form, Select } from 'antd'
 import { defer } from '../../utils/defer'
 
 const DialogService = (() => {
@@ -16,22 +16,22 @@ const DialogService = (() => {
         const [showFlag, setShowFlag] = useState(false)
         const [editValue, setEditValue] = useState('')
         const [loading, setLoading] = useState(false)
+        const [dashboardname, setDashboardname] = useState(
+          props.option.editValue.dashboardname
+        )
 
         const handler = {
           onCancel: () => {
             !!option.onCancel && option.onCancel()
             methods.close()
           },
-          // onConfirm: () => {
-          //   !!option.onConfirm && option.onConfirm(editValue)
-          //   methods.close()
-          // },
+          //导入
           onImportConfirm: () => {
             !!option.onImportConfirm && option.onImportConfirm(editValue)
             methods.close()
           },
+          //导出
           onExportConfirm: () => {
-            // !!option.onExportConfirm && option.onExportConfirm(editValue)
             setLoading(true)
             //数据响应成功后执行下面操作
             setTimeout(() => {
@@ -43,7 +43,7 @@ const DialogService = (() => {
         }
 
         const inputProps = {
-          value: editValue,
+          value: JSON.stringify(editValue),
           onChange: (e) => {
             setEditValue(e.target.value)
           },
@@ -59,6 +59,8 @@ const DialogService = (() => {
             setShowFlag(false)
           },
         }
+
+        const select_opt = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 
         props.onRef(methods)
 
@@ -103,26 +105,38 @@ const DialogService = (() => {
                     </Button>,
                   ]
             }
-            // footer={
-            //   option.confirmButton || option.cancelButton ? (
-            //     <>
-            //       {option.cancelButton && (
-            //         <Button onClick={handler.onCancel}>取消</Button>
-            //       )}
-            //       {option.confirmButton && (
-            //         <Button type='primary' onClick={handler.onConfirm}>
-            //           确定
-            //         </Button>
-            //       )}
-            //     </>
-            //   ) : null
-            // }
           >
             {option.message}
-            {/* 可以改成input框 */}
-            {/* {option.editType === 'input' && <Input {...inputProps} />} */}
-            {option.editType === 'textarea' && (
-              <Input.TextArea {...inputProps} rows={15} />
+            {option.editReadonly ? (
+              <Form>
+                <Form.Item>
+                  <Input
+                    addonBefore='方案名称'
+                    value={dashboardname}
+                    onChange={(e) => setDashboardname(e.target.value)}
+                  />
+                </Form.Item>
+                <Form.Item>
+                  <Input.TextArea
+                    value={inputProps.value}
+                    rows={15}
+                    readOnly={true}
+                  />
+                </Form.Item>
+              </Form>
+            ) : (
+              <Form>
+                <Form.Item>
+                  <Select>
+                    {select_opt.map((name) => (
+                      <option key={name}>{name}</option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                <Form.Item>
+                  <Input.TextArea value={inputProps.value} rows={15} />
+                </Form.Item>
+              </Form>
             )}
           </Modal>
         )
@@ -138,6 +152,7 @@ const DialogService = (() => {
 })()
 
 export const dialog = {
+  //JSON.stringify(props.value), {editReadonly: true,title: '导出设计方案',}
   textarea: (editValue, opt) => {
     const dfd = defer()
     const option = {

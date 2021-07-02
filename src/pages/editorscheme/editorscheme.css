@@ -1,0 +1,13 @@
+.editorscheme {
+  height: 540px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  overflow: scroll;
+  padding: 20px;
+}
+.editorscheme .scheme-card {
+  width: 275px;
+  margin: 6px;
+}

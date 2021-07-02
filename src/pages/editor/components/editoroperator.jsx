@@ -2,7 +2,7 @@ import deepcopy from 'deepcopy'
 import { useEffect, useState } from 'react'
 import { Form, Button, InputNumber, Input, Select, Alert } from 'antd'
 import { EditorPropsType } from './editor.props'
-import { SketchPicker } from 'react-color'
+import { ChromePicker } from 'react-color'
 
 /**
  * @param props - selectBlock value updateValue updateBlocks value config
@@ -26,8 +26,8 @@ export const EditorOperator = (props) => {
         })
       } else {
         props.value.blocks.forEach((block) => {
-          if (block.componentKey === editData.componentKey) {
-            block.props = editData.props
+          if (block.focus) {
+            block.blockprops = editData.props
             return
           }
         })
@@ -135,13 +135,24 @@ const renderEditor = (propsName, propsConfig) => {
         </Form.Item>
       )
     case EditorPropsType.color:
+      const colorChangeComplete = (color) => {
+        propsConfig.color = color.hex
+      }
+      const colorChange = (color) => {
+        propsConfig.color = color.hex
+      }
       return (
         <Form.Item
           label={propsConfig.name}
           name={['props', propsName]}
           key={`props_${propsName}`}
         >
-          <SketchPicker color={propsConfig.color} />
+          <ChromePicker
+            disableAlpha={true}
+            color={propsConfig.color}
+            onChange={colorChange}
+            onChangeComplete={colorChangeComplete}
+          />
         </Form.Item>
       )
     case EditorPropsType.select:
@@ -160,6 +171,25 @@ const renderEditor = (propsName, propsConfig) => {
           </Select>
         </Form.Item>
       )
+    // case EditorPropsType.selects:
+    //   const selectsChange = (value) => {
+    //     console.log(value)
+    //   }
+    //   return (
+    //     <Form.Item
+    //       label={propsConfig.name}
+    //       name={['props', propsName]}
+    //       key={`props_${propsName}`}
+    //     >
+    //       <Select mode='tags' onChange={selectsChange}>
+    //         {propsConfig.options.map((opt, index) => (
+    //           <Select.Option value={opt.value} key={index}>
+    //             {opt.label}
+    //           </Select.Option>
+    //         ))}
+    //       </Select>
+    //     </Form.Item>
+    //   )
     default:
       return (
         <Alert

@@ -2,6 +2,7 @@ export const EditorPropsType = {
   //编辑说明
   text: 'text',
   select: 'select',
+  selects: 'selects',
   color: 'color',
 }
 
@@ -21,6 +22,14 @@ export const createSelectProp = (name, options) => {
   return {
     name,
     type: EditorPropsType.select,
+    options,
+  }
+}
+
+export const createSelectsProp = (name, options) => {
+  return {
+    name,
+    type: EditorPropsType.selects,
     options,
   }
 }
