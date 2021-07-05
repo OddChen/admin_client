@@ -2,10 +2,12 @@ import React, { useState } from 'react'
 import './editor.less'
 import EditorPage from './components/editor.page'
 import { editorConfig } from './components/editor.config'
-import editorData from './editor-data.json'
+// import editorData from './editor-data.json'
 
-const Editor = () => {
+const Editor = (props) => {
+  let editorData = props.location.editorData
   const [editorValue, setEditorValue] = useState(editorData)
+
   return (
     <EditorPage
       config={editorConfig}

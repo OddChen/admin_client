@@ -16,11 +16,11 @@ const menuList = [
     path: '/editorscheme',
     icon: <AppstoreOutlined />,
   },
-  {
-    title: '编辑',
-    path: '/editor',
-    icon: <AppstoreOutlined />,
-  },
+  // {
+  //   title: '编辑',
+  //   path: '/editor',
+  //   icon: <AppstoreOutlined />,
+  // },
   {
     title: '管理',
     path: '/manage',

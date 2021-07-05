@@ -8,7 +8,7 @@ import { createEvent } from '../plugins/event'
 import { CallBackRef } from '../hooks/CallbackRef'
 import { withRouter } from 'react-router'
 import { dialog } from '../service/dialog/dialog'
-import { notification } from 'antd'
+import { notification, Button } from 'antd'
 import deepcopy from 'deepcopy'
 import { EditorOperator } from './editoroperator'
 
@@ -593,12 +593,12 @@ const EditorPage = (props) => {
         setEditing(false)
 
         //回头改成跳转到展示部分
-        props.history.push('/editorscheme')
+        // props.history.push('/editorscheme')
       },
     },
   ]
 
-  return (
+  return editing ? (
     <div className={classes}>
       <div className='editor-menu'>
         {props.config.componentArray.map((component, index) => (
@@ -677,6 +677,27 @@ const EditorPage = (props) => {
         updateBlocks={methods.updateBlocks}
         config={props.config}
       />
+    </div>
+  ) : (
+    <div
+      className='editor-container'
+      style={containerStyles}
+      ref={containerRef}
+    >
+      <Button type='link' onClick={() => setEditing(!editing)}>
+        编辑
+      </Button>
+      <Button type='link' onClick={() => props.history.push('/editorscheme')}>
+        退出
+      </Button>
+
+      {props.value.blocks.map((block, index) => (
+        <EditorBlock
+          key={index}
+          block={block}
+          config={props.config}
+        ></EditorBlock>
+      ))}
     </div>
   )
 }

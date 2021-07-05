@@ -274,6 +274,16 @@
   left: 0;
   border-top: dashed 1px #409eff;
 }
+.editor-container {
+  position: relative;
+  margin: auto;
+  border: 1px solid #dcdfe6;
+}
+.editor-container .editor-block {
+  position: absolute;
+  background-color: transparent;
+  user-select: none;
+}
 /**
 .editor {
   height: 540px;
