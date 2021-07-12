@@ -15,7 +15,7 @@ const { Content, Footer } = Layout
 class Dashboard extends React.Component {
   render() {
     const user = memoryUtils.user
-    if (!user || !user._id) {
+    if (!user || !user.id) {
       //跳转到登录
       return <Redirect to='/login' />
     }

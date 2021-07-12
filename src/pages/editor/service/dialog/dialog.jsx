@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import ReactDom from 'react-dom'
 // import './dialog.less'
-import { Modal, Button, Input, message, Form, Select } from 'antd'
+import { Modal, Button, Input, message, Form, Select, Switch } from 'antd'
 import { defer } from '../../utils/defer'
+import { reqExport } from '../../../../api'
+import memoryUtils from '../../../../utils/memoryUtils'
 
 const DialogService = (() => {
   let ins
@@ -17,7 +19,13 @@ const DialogService = (() => {
         const [editValue, setEditValue] = useState('')
         const [loading, setLoading] = useState(false)
         const [dashboardname, setDashboardname] = useState(
-          props.option.editValue.dashboardname
+          props.option.editValue.name
+        )
+        const [ispublic, setIspublic] = useState(
+          props.option.editValue.ispublic
+        )
+        const [description, setDescription] = useState(
+          props.option.editValue.description
         )
 
         const handler = {
@@ -31,14 +39,28 @@ const DialogService = (() => {
             methods.close()
           },
           //导出
-          onExportConfirm: () => {
+          onExportConfirm: async () => {
             setLoading(true)
-            //数据响应成功后执行下面操作
-            setTimeout(() => {
+            let user_id = memoryUtils.user.id
+            editValue.user_id = user_id
+            editValue.name = dashboardname
+            editValue.description = description
+            editValue.ispublic = ispublic
+            setEditValue(editValue)
+
+            let response = await reqExport(editValue)
+            console.log(response)
+            const result = response.data
+            // 数据响应成功后执行下面操作
+            if (result.status === 0) {
               setLoading(false)
               message.success('成功导出')
               methods.close()
-            }, 1000)
+            } else {
+              message.error(result.msg, 3)
+            }
+            setLoading(false)
+            message.success('导出成功')
           },
         }
 
@@ -60,7 +82,7 @@ const DialogService = (() => {
           },
         }
 
-        const select_opt = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+        const select_opt = [1, 2, 3, 4, 5]
 
         props.onRef(methods)
 
@@ -117,9 +139,25 @@ const DialogService = (() => {
                   />
                 </Form.Item>
                 <Form.Item>
+                  <Input
+                    addonBefore='方案描述'
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
+                </Form.Item>
+                <Form.Item>
+                  是否公开：
+                  <Switch
+                    checkedChildren='是'
+                    unCheckedChildren='否'
+                    checked={ispublic}
+                    onClick={() => setIspublic(!ispublic)}
+                  />
+                </Form.Item>
+                <Form.Item>
                   <Input.TextArea
                     value={inputProps.value}
-                    rows={15}
+                    rows={10}
                     readOnly={true}
                   />
                 </Form.Item>
@@ -129,12 +167,17 @@ const DialogService = (() => {
                 <Form.Item>
                   <Select>
                     {select_opt.map((name) => (
-                      <option key={name}>{name}</option>
+                      <Select.Option key={name}>{name}</Select.Option>
                     ))}
                   </Select>
                 </Form.Item>
                 <Form.Item>
-                  <Input.TextArea value={inputProps.value} rows={15} />
+                  <Input.TextArea
+                    value={inputProps.value}
+                    rows={15}
+                    readOnly={false}
+                    onChange={inputProps.onChange}
+                  />
                 </Form.Item>
               </Form>
             )}

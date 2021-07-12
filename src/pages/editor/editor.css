@@ -90,8 +90,6 @@
   margin-bottom: 20px;
 }
 .editor .editor-body {
-  display: flex;
-  justify-content: center;
   top: 0;
   right: 275px;
   bottom: 0;
@@ -100,6 +98,100 @@
   padding-bottom: 300px;
   background-color: #ebeef5;
   overflow-y: auto;
+}
+.editor .editor-body .editor-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border: dashed 1px #409eff;
+  pointer-events: none;
+}
+.editor .editor-body .editor-container .editor-block {
+  position: absolute;
+  background-color: transparent;
+  user-select: none;
+}
+.editor .editor-body .editor-container .editor-block::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  cursor: move;
+}
+.editor .editor-body .editor-container .editor-block-focus::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  bottom: -4px;
+  left: -4px;
+  border: dashed 1px #409eff;
+}
+.editor .editor-body .editor-container .editor-block-focus .editor-block-resize {
+  position: absolute;
+}
+.editor .editor-body .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-top-left,
+.editor .editor-body .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-top,
+.editor .editor-body .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-top-right,
+.editor .editor-body .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-left,
+.editor .editor-body .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-right,
+.editor .editor-body .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-bottom-left,
+.editor .editor-body .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-bottom,
+.editor .editor-body .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-bottom-right {
+  top: -6px;
+  right: -6px;
+  bottom: -6px;
+  left: -6px;
+  height: 6px;
+  width: 6px;
+  background-color: #409eff;
+}
+.editor .editor-body .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-top-left {
+  right: auto;
+  bottom: auto;
+  cursor: nw-resize;
+}
+.editor .editor-body .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-top {
+  left: calc(50% - 6px / 2);
+  right: auto;
+  bottom: auto;
+  cursor: n-resize;
+}
+.editor .editor-body .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-top-right {
+  left: auto;
+  bottom: auto;
+  cursor: ne-resize;
+}
+.editor .editor-body .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-left {
+  top: calc(50% - 6px / 2);
+  right: auto;
+  cursor: w-resize;
+}
+.editor .editor-body .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-right {
+  top: calc(50% - 6px / 2);
+  left: auto;
+  cursor: e-resize;
+}
+.editor .editor-body .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-bottom-left {
+  right: auto;
+  top: auto;
+  cursor: sw-resize;
+}
+.editor .editor-body .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-bottom {
+  left: calc(50% - 6px / 2);
+  right: auto;
+  top: auto;
+  cursor: s-resize;
+}
+.editor .editor-body .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-bottom-right {
+  left: auto;
+  top: auto;
+  cursor: se-resize;
 }
 .editor .editor-head {
   display: flex;
@@ -146,103 +238,6 @@
 }
 .editor .editor-head .editor-head-btn:active {
   background-color: #d9ecff;
-}
-.editor .editor-container {
-  position: relative;
-}
-.editor .editor-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  border: dashed 1px #409eff;
-  pointer-events: none;
-}
-.editor .editor-container .editor-block {
-  position: absolute;
-  background-color: transparent;
-  user-select: none;
-}
-.editor .editor-container .editor-block::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  cursor: move;
-}
-.editor .editor-container .editor-block-focus::before {
-  content: '';
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  bottom: -4px;
-  left: -4px;
-  border: dashed 1px #409eff;
-}
-.editor .editor-container .editor-block-focus .editor-block-resize {
-  position: absolute;
-}
-.editor .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-top-left,
-.editor .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-top,
-.editor .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-top-right,
-.editor .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-left,
-.editor .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-right,
-.editor .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-bottom-left,
-.editor .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-bottom,
-.editor .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-bottom-right {
-  top: -6px;
-  right: -6px;
-  bottom: -6px;
-  left: -6px;
-  height: 6px;
-  width: 6px;
-  background-color: #409eff;
-}
-.editor .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-top-left {
-  right: auto;
-  bottom: auto;
-  cursor: nw-resize;
-}
-.editor .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-top {
-  left: calc(50% - 6px / 2);
-  right: auto;
-  bottom: auto;
-  cursor: n-resize;
-}
-.editor .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-top-right {
-  left: auto;
-  bottom: auto;
-  cursor: ne-resize;
-}
-.editor .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-left {
-  top: calc(50% - 6px / 2);
-  right: auto;
-  cursor: w-resize;
-}
-.editor .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-right {
-  top: calc(50% - 6px / 2);
-  left: auto;
-  cursor: e-resize;
-}
-.editor .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-bottom-left {
-  right: auto;
-  top: auto;
-  cursor: sw-resize;
-}
-.editor .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-bottom {
-  left: calc(50% - 6px / 2);
-  right: auto;
-  top: auto;
-  cursor: s-resize;
-}
-.editor .editor-container .editor-block-focus .editor-block-resize.editor-block-resize-bottom-right {
-  left: auto;
-  top: auto;
-  cursor: se-resize;
 }
 .editor.editor-preview .editor-block-resize {
   display: none;

@@ -1,5 +1,9 @@
 {
-  "dashboardname": "默认模板",
+  "id": 1,
+  "ispublic": true,
+  "user_id": 0,
+  "description": "包含所有类型图表",
+  "name": "默认模板",
   "container": {
     "height": 500,
     "width": 700,

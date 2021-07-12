@@ -50,5 +50,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://rap2api.taobao.org/app/mock/282184"
+  "proxy": "http://localhost:8090"
 }

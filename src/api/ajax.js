@@ -24,9 +24,11 @@ export default function ajax(url, data = {}, type = 'GET') {
     //成功调用resolve(value)
     promise
       .then((res) => {
+        // console.log(res)
         resolve(res)
       })
       .catch((error) => {
+        console.log(error)
         message.error('请求出错了' + error.message)
       })
   })

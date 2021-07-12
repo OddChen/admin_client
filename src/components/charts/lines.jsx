@@ -7,8 +7,8 @@ import { CanvasRenderer } from 'echarts/renderers'
 class LineExample extends React.Component {
   setLineOption = (props) => {
     let blockprops = props.blockprops
-    let x_data = blockprops.xAxis_data?.split('，')
-    let series_data = blockprops.series_data?.split('，')
+    let x_data = blockprops.xAxis_data?.replace(/，/g, ',').split(',')
+    let series_data = blockprops.series_data?.replace(/，/g, ',').split(',')
     return {
       xAxis: {
         name: blockprops.xAxis_name || '',

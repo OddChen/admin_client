@@ -21,7 +21,7 @@ const EditorPage = (props) => {
   const [selectIndex, setSelectIndex] = useState(-1)
 
   const selectBlock = useMemo(
-    () => props.value.blocks[selectIndex],
+    () => (props.value.blocks ? props.value.blocks[selectIndex] : undefined),
     [props.value.blocks, selectIndex]
   )
 

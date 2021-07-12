@@ -1,20 +1,22 @@
 /**
  * 可视化设计方案表格
  */
-import { useState } from 'react'
-import { Skeleton, Card, Button, Pagination, Spin } from 'antd'
+import { useEffect, useState } from 'react'
+import { Skeleton, Card, Button, Pagination, Spin, message } from 'antd'
 import { EditOutlined, SettingOutlined } from '@ant-design/icons'
 import './editorscheme.less'
 import { Link } from 'react-router-dom'
-import editorData from '../editor/editor-data.json'
+import editorDatas from '../editor/editor-data.json'
+import { reqGetData } from '../../api'
+import memoryUtils from '../../utils/memoryUtils'
+import axios from 'axios'
 
 const EditorScheme = () => {
-  const [loading, setLoading] = useState()
+  const [loading, setLoading] = useState(true)
   const [spinning, setSpinning] = useState(true)
   const [pagevalue, setPagevalue] = useState(0)
+  const [schemes, setSchemes] = useState([editorDatas])
   const { Meta } = Card
-
-  let schemes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
 
   const handleChange = (value) => {
     //page, pageSize
@@ -25,24 +27,40 @@ const EditorScheme = () => {
     setSpinning(false)
   }, 500)
 
-  let editor = {
-    pathname: '/editor',
-    editorData,
-  }
+  const user_id = memoryUtils.user.id
+  useEffect(() => {
+    const getData = async () => {
+      const response = await reqGetData(user_id)
+      // console.log(response)
+      const result = response.data
+      if (result.status === 0) {
+        setLoading(false)
+        let schemesArr = []
+        result.data.forEach((value) => {
+          schemesArr.push(value)
+        })
+        // console.log(schemesArr)
+        setSchemes(schemesArr)
+      } else {
+        message.error(result.msg, 3)
+      }
+    }
+    getData()
+    // setEditorData(response.data)
+  }, [user_id])
 
   let render = schemes.slice(pagevalue, pagevalue + 15).map((scheme) => {
+    let editor = {
+      pathname: '/editor',
+      editorData: scheme,
+    }
     return (
-      <div>
+      <div key={scheme.id}>
         <Spin spinning={spinning}>
           <Card
-            key={scheme}
             className='scheme-card'
             hoverable={true}
             actions={[
-              // <Button type='link'>
-              //   <SettingOutlined key='setting' />
-              //   操作
-              // </Button>,
               <Button type='link' size='small'>
                 <Link to={editor}>
                   <EditOutlined key='edit' />
@@ -52,7 +70,7 @@ const EditorScheme = () => {
             ]}
           >
             <Skeleton loading={loading} active>
-              <Meta title={scheme} description='This is the description' />
+              <Meta title={scheme.name} description={scheme.description} />
             </Skeleton>
           </Card>
         </Spin>

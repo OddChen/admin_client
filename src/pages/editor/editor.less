@@ -106,8 +106,8 @@
   }
 
   .editor-body {
-    display: flex;
-    justify-content: center;
+    // display: flex;
+    // justify-content: center;
     top: 0;
     right: @operatorSize;
     bottom: 0;
@@ -116,6 +116,118 @@
     padding-bottom: 300px;
     background-color: @ibl;
     overflow-y: auto;
+
+    .editor-container {
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        border: dashed 1px @primary;
+        pointer-events: none;
+      }
+
+      .editor-block {
+        position: absolute;
+        background-color: transparent;
+        user-select: none;
+
+        &::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          cursor: move;
+        }
+      }
+
+      .editor-block-focus {
+        &::before {
+          content: '';
+          position: absolute;
+          @size: 4px;
+          top: -@size;
+          right: -@size;
+          bottom: -@size;
+          left: -@size;
+          border: dashed 1px @primary;
+        }
+
+        .editor-block-resize {
+          position: absolute;
+
+          @offset: 6px;
+          @size: 6px;
+
+          &.editor-block-resize-top-left,
+          &.editor-block-resize-top,
+          &.editor-block-resize-top-right,
+          &.editor-block-resize-left,
+          &.editor-block-resize-right,
+          &.editor-block-resize-bottom-left,
+          &.editor-block-resize-bottom,
+          &.editor-block-resize-bottom-right {
+            top: -@offset;
+            right: -@offset;
+            bottom: -@offset;
+            left: -@offset;
+            height: @size;
+            width: @size;
+            background-color: @primary;
+            // user-select: none;
+          }
+
+          &.editor-block-resize-top-left {
+            right: auto;
+            bottom: auto;
+            cursor: nw-resize;
+          }
+          &.editor-block-resize-top {
+            left: calc(50% - @size / 2);
+            right: auto;
+            bottom: auto;
+            cursor: n-resize;
+          }
+          &.editor-block-resize-top-right {
+            left: auto;
+            bottom: auto;
+            cursor: ne-resize;
+          }
+
+          &.editor-block-resize-left {
+            top: calc(50% - @size / 2);
+            right: auto;
+            cursor: w-resize;
+          }
+          &.editor-block-resize-right {
+            top: calc(50% - @size / 2);
+            left: auto;
+            cursor: e-resize;
+          }
+
+          &.editor-block-resize-bottom-left {
+            right: auto;
+            top: auto;
+            cursor: sw-resize;
+          }
+          &.editor-block-resize-bottom {
+            left: calc(50% - @size / 2);
+            right: auto;
+            top: auto;
+            cursor: s-resize;
+          }
+          &.editor-block-resize-bottom-right {
+            left: auto;
+            top: auto;
+            cursor: se-resize;
+          }
+        }
+      }
+    }
   }
 
   .editor-head {
@@ -169,120 +281,6 @@
 
       &:active {
         background-color: mix(@primary, white, 20%);
-      }
-    }
-  }
-
-  .editor-container {
-    position: relative;
-    // background-color: #fff;
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      border: dashed 1px @primary;
-      pointer-events: none;
-    }
-
-    .editor-block {
-      position: absolute;
-      background-color: transparent;
-      user-select: none;
-
-      &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        cursor: move;
-      }
-    }
-
-    .editor-block-focus {
-      &::before {
-        content: '';
-        position: absolute;
-        @size: 4px;
-        top: -@size;
-        right: -@size;
-        bottom: -@size;
-        left: -@size;
-        border: dashed 1px @primary;
-      }
-
-      .editor-block-resize {
-        position: absolute;
-
-        @offset: 6px;
-        @size: 6px;
-
-        &.editor-block-resize-top-left,
-        &.editor-block-resize-top,
-        &.editor-block-resize-top-right,
-        &.editor-block-resize-left,
-        &.editor-block-resize-right,
-        &.editor-block-resize-bottom-left,
-        &.editor-block-resize-bottom,
-        &.editor-block-resize-bottom-right {
-          top: -@offset;
-          right: -@offset;
-          bottom: -@offset;
-          left: -@offset;
-          height: @size;
-          width: @size;
-          background-color: @primary;
-          // user-select: none;
-        }
-
-        &.editor-block-resize-top-left {
-          right: auto;
-          bottom: auto;
-          cursor: nw-resize;
-        }
-        &.editor-block-resize-top {
-          left: calc(50% - @size / 2);
-          right: auto;
-          bottom: auto;
-          cursor: n-resize;
-        }
-        &.editor-block-resize-top-right {
-          left: auto;
-          bottom: auto;
-          cursor: ne-resize;
-        }
-
-        &.editor-block-resize-left {
-          top: calc(50% - @size / 2);
-          right: auto;
-          cursor: w-resize;
-        }
-        &.editor-block-resize-right {
-          top: calc(50% - @size / 2);
-          left: auto;
-          cursor: e-resize;
-        }
-
-        &.editor-block-resize-bottom-left {
-          right: auto;
-          top: auto;
-          cursor: sw-resize;
-        }
-        &.editor-block-resize-bottom {
-          left: calc(50% - @size / 2);
-          right: auto;
-          top: auto;
-          cursor: s-resize;
-        }
-        &.editor-block-resize-bottom-right {
-          left: auto;
-          top: auto;
-          cursor: se-resize;
-        }
       }
     }
   }
