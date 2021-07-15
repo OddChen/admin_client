@@ -9,7 +9,6 @@ import { Link } from 'react-router-dom'
 import editorDatas from '../editor/editor-data.json'
 import { reqGetData } from '../../api'
 import memoryUtils from '../../utils/memoryUtils'
-import axios from 'axios'
 
 const EditorScheme = () => {
   const [loading, setLoading] = useState(true)
@@ -31,22 +30,22 @@ const EditorScheme = () => {
   useEffect(() => {
     const getData = async () => {
       const response = await reqGetData(user_id)
-      // console.log(response)
       const result = response.data
+
       if (result.status === 0) {
         setLoading(false)
+
         let schemesArr = []
         result.data.forEach((value) => {
           schemesArr.push(value)
         })
-        // console.log(schemesArr)
+
         setSchemes(schemesArr)
       } else {
         message.error(result.msg, 3)
       }
     }
     getData()
-    // setEditorData(response.data)
   }, [user_id])
 
   let render = schemes.slice(pagevalue, pagevalue + 15).map((scheme) => {
@@ -54,6 +53,7 @@ const EditorScheme = () => {
       pathname: '/editor',
       editorData: scheme,
     }
+
     return (
       <div key={scheme.id}>
         <Spin spinning={spinning}>

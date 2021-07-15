@@ -3,7 +3,7 @@ import ReactDom from 'react-dom'
 // import './dialog.less'
 import { Modal, Button, Input, message, Form, Select, Switch } from 'antd'
 import { defer } from '../../utils/defer'
-import { reqExport } from '../../../../api'
+import { reqExport, reqGetData } from '../../../../api'
 import memoryUtils from '../../../../utils/memoryUtils'
 
 const DialogService = (() => {
@@ -15,9 +15,13 @@ const DialogService = (() => {
 
       const Service = (props) => {
         const [option, setOption] = useState(props.option)
+        //弹窗显示
         const [showFlag, setShowFlag] = useState(false)
-        const [editValue, setEditValue] = useState('')
+        //数据内容
+        const [editValue, setEditValue] = useState()
+        //加载完成后关闭弹窗
         const [loading, setLoading] = useState(false)
+        //数据项目，方便渲染弹窗内容
         const [dashboardname, setDashboardname] = useState(
           props.option.editValue.name
         )
@@ -27,17 +31,24 @@ const DialogService = (() => {
         const [description, setDescription] = useState(
           props.option.editValue.description
         )
+        //选项内容
+        const [selectboard, setSelectboard] = useState([])
 
+        /**
+         * 导入导出
+         */
         const handler = {
           onCancel: () => {
             !!option.onCancel && option.onCancel()
             methods.close()
           },
+
           //导入
           onImportConfirm: () => {
             !!option.onImportConfirm && option.onImportConfirm(editValue)
             methods.close()
           },
+
           //导出
           onExportConfirm: async () => {
             setLoading(true)
@@ -67,7 +78,8 @@ const DialogService = (() => {
         const inputProps = {
           value: JSON.stringify(editValue),
           onChange: (e) => {
-            setEditValue(e.target.value)
+            let newvalue = JSON.parse(e.target.value)
+            setEditValue(newvalue)
           },
         }
 
@@ -82,12 +94,41 @@ const DialogService = (() => {
           },
         }
 
-        const select_opt = [1, 2, 3, 4, 5]
+        /**
+         * 模板选择
+         */
+        const handleSelect = (key) => {
+          const selectValue = selectboard.find((val) => val.id === Number(key))
+          const container = JSON.parse(selectValue.container)
+          const blocks = JSON.parse(selectValue.blocks)
+          setEditValue({
+            ...selectValue,
+            container,
+            blocks,
+          })
+        }
 
         props.onRef(methods)
-
         useEffect(() => {
           methods.show(props.option)
+          if (!option.editReadonly) {
+            const getData = async () => {
+              const user_id = memoryUtils.user.id
+              const response = await reqGetData(user_id)
+              const result = response.data
+
+              if (result.status === 0) {
+                let board = []
+                result.data.forEach((value) => {
+                  board.push(value)
+                })
+                setSelectboard(board)
+              } else {
+                message.error(result.msg, 3)
+              }
+            }
+            getData()
+          }
           // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [])
 
@@ -165,9 +206,11 @@ const DialogService = (() => {
             ) : (
               <Form>
                 <Form.Item>
-                  <Select>
-                    {select_opt.map((name) => (
-                      <Select.Option key={name}>{name}</Select.Option>
+                  <Select onSelect={handleSelect}>
+                    {selectboard.map((value) => (
+                      <Select.Option key={value.id}>
+                        {value.name + '（' + value.description + '）'}
+                      </Select.Option>
                     ))}
                   </Select>
                 </Form.Item>

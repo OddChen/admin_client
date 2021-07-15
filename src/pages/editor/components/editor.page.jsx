@@ -537,7 +537,7 @@ const EditorPage = (props) => {
         })
         // console.log(text)
         try {
-          const data = JSON.parse(text || '')
+          const data = text || ''
           // console.log(data)
           commander.updateValue(data)
         } catch (e) {

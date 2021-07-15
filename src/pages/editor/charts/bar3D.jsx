@@ -225,6 +225,7 @@ class Bar3D extends React.Component {
       [6, 22, 2],
       [6, 23, 6],
     ]
+
     option = {
       tooltip: {},
       visualMap: {

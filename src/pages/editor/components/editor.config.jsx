@@ -1,6 +1,6 @@
 import { createEditorConfig } from './editor.utils'
-import LineExample from '../../../components/charts/lines'
-import Bar3D from '../../../components/charts/bar3D'
+import LineExample from '../charts/lines'
+import Bar3D from '../charts/bar3D'
 import {
   createColorProp,
   createSelectProp,
