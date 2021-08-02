@@ -28,8 +28,8 @@ export default function ajax(url, data = {}, type = 'GET') {
         resolve(res)
       })
       .catch((error) => {
-        console.log(error)
-        message.error('请求出错了' + error.message)
+        // console.log(error)
+        message.error('请求出错了，' + error.message, 2)
       })
   })
 }

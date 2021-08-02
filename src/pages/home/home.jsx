@@ -7,6 +7,7 @@ import './home.less'
 import DashBoard from '../dashboard/dashboard'
 import User from '../user/user'
 import EditorScheme from '../editorscheme/editorscheme'
+import Evaluation from '../evaluation/evaluation'
 
 const { Content, Footer } = Layout
 /**
@@ -24,6 +25,7 @@ class Dashboard extends React.Component {
     let path = this.props.location.pathname.split('/').filter((i) => i)
     //console.log(path)
     const breadcrumbNameMap = {
+      '/evaluation': '评价',
       '/dashboard': '展示',
       '/editorscheme': '方案',
       //'/manage': '管理',
@@ -46,6 +48,7 @@ class Dashboard extends React.Component {
             </Breadcrumb>
             <Content className='layout-content'>
               <Switch>
+                <Route path='/evaluation' component={Evaluation} />
                 <Route path='/dashboard' component={DashBoard} />
                 <Route path='/editorscheme' component={EditorScheme} />
                 <Route path='/manage/user' component={User} />
