@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Button } from 'antd'
+import ShareDataset from './components/sharedataset'
+import CustomBarTrend from './components/custombartrend'
 
 const DashBoard = () => {
   const [isFullScreen, setIsFullScreen] = useState(false)
@@ -37,6 +39,8 @@ const DashBoard = () => {
           全屏
         </Button>
       )}
+      <ShareDataset />
+      <CustomBarTrend />
     </div>
   )
 }

@@ -1,28 +1,23 @@
 import { useState } from 'react'
-import { Button, Form, Input, Modal, Steps, Select, message } from 'antd'
+import { Button, Steps, message } from 'antd'
 import './evaluation.less'
-import CriteriaTable from './component/criteriatable'
-import DataTable from './component/datatable'
-import { criteriaToDataColumns } from './component/criteriaToDataColumns'
+import CriteriaTable from './components/criteriatable'
+import DataTable from './components/datatable'
+import { criteriaToDataColumns } from './components/criteriaToDataColumns'
 import XLSX from 'xlsx'
-import ResultTable from './component/resulttable'
+import ResultTable from './components/resulttable'
+import Visualizatin from './components/visualization'
 
 const Evaluation = () => {
   //数据
   const [state, setState] = useState({
     criteria: {
-      dataSource: [
-        {
-          key: '1',
-          name: '公路通车里程',
-          type: 'benefit',
-          weight: '30%',
-        },
-      ],
-      count: 1,
+      dataSource: [],
+      count: 0,
     },
     sum: 0,
     dataset: [],
+    result: [],
     loading: false,
   })
   //当前步骤
@@ -32,6 +27,40 @@ const Evaluation = () => {
   /**
    * 指标权重表格操作
    */
+  //导入文件
+  const handleFile = (files) => {
+    setState({ ...state, loading: true })
+    const reader = new FileReader()
+    const file = files.file.originFileObj
+    //是否读取为二进制字符串
+    const rABS = !!reader.readAsBinaryString
+    if (rABS) {
+      reader.readAsBinaryString(file)
+    } else {
+      reader.readAsArrayBuffer(file)
+    }
+    reader.onload = (e) => {
+      const bstr = e.target.result
+      //读取完成的数据
+      const wb = XLSX.read(bstr, { type: rABS ? 'binary' : 'array' })
+      const wsname = wb.SheetNames[0]
+      const ws = wb.Sheets[wsname]
+      const data = XLSX.utils.sheet_to_json(ws, { header: 0 })
+      setState({
+        ...state,
+        criteria: { dataSource: data.map(mapRows), count: data.length },
+      })
+    }
+  }
+  const mapRows = (row) => {
+    let _row = { ...row }
+    return {
+      key: _row['序号'],
+      name: _row['指标'],
+      type: _row['类型'],
+      weight: parseFloat(_row['权重'] * 100).toFixed(4),
+    }
+  }
   //添加行
   const handleAdd = () => {
     const { dataSource, count } = state.criteria
@@ -39,9 +68,9 @@ const Evaluation = () => {
     let newdataSource = dataSource
     newdataSource.push({
       key: `${newcount}`,
-      name: '新增',
+      name: '指标名',
       type: 'benefit',
-      weight: '%',
+      weight: '0',
     })
     setState({
       ...state,
@@ -72,8 +101,12 @@ const Evaluation = () => {
       },
     })
   }
+
+  /**
+   * 数据表格操作
+   */
   //导入文件
-  const handleFile = (files) => {
+  const handleDataFile = (files) => {
     setState({ ...state, loading: true })
     const reader = new FileReader()
     const file = files.file.originFileObj
@@ -91,21 +124,59 @@ const Evaluation = () => {
       const wsname = wb.SheetNames[0]
       const ws = wb.Sheets[wsname]
       const data = XLSX.utils.sheet_to_json(ws, { header: 0 })
-      setState({ ...state, dataset: data.map(mapRows), loading: false })
-      console.log(state.dataset)
+      setState({ ...state, dataset: data.map(mapDataRows), loading: false })
     }
   }
-  //
-  const mapRows = (row, idx) => {
+  const mapDataRows = (row, idx) => {
     let _row = { ...row }
-    _row.name = _row['Name']
-    console.log(row, _row.name)
-    delete _row['Name']
+    _row.name = _row['城市']
+    delete _row['城市']
     return {
       ..._row,
       city: _row.name,
-      id: idx + state.dataset.length,
+      key: idx + state.dataset.length,
     }
+  }
+  //添加行
+  const handleDataAdd = () => {
+    const newdata = [...state.dataset]
+    const len = newdata.length
+    //需要添加的属性列
+    const otherdata = []
+    state.criteria.dataSource.map((column) =>
+      otherdata.push({ [column.name]: '0' })
+    )
+    //新增数据
+    newdata.push({
+      key: `${len}`,
+      city: '城市名',
+    })
+    //合并属性
+    let curdata = otherdata.reduce((acc, obj) => {
+      return Object.assign(acc, obj)
+    }, newdata[len])
+    newdata[len] = curdata
+    setState({
+      ...state,
+      dataset: newdata,
+    })
+    console.log(state.dataset)
+  }
+  //修改
+  const handleDataSave = (newData) => {
+    setState({
+      ...state,
+      dataset: newData,
+    })
+  }
+  //删除行
+  const handleDataDelete = (key) => {
+    const curdata = [...state.dataset]
+    let newdata = curdata.filter((item) => item.key !== key)
+    setState({
+      ...state,
+      dataset: newdata,
+    })
   }
 
   const steps = [
@@ -117,6 +188,7 @@ const Evaluation = () => {
           handleAdd={handleAdd}
           handleDelete={handleDelete}
           handleSave={handleSave}
+          handleFile={handleFile}
         />
       ),
     },
@@ -127,17 +199,25 @@ const Evaluation = () => {
           rows={state.dataset}
           columns={criteriaToDataColumns(
             state.criteria.dataSource,
-            handleDelete
+            handleDataDelete
           )}
-          handleFile={handleFile}
+          handleAdd={handleDataAdd}
+          handleFile={handleDataFile}
+          handleSave={handleDataSave}
           loading={state.loading}
         />
       ),
     },
     {
       title: '评价结果',
-      content: <ResultTable />,
+      content: (
+        <ResultTable criteria={state.criteria} dataset={state.dataset} />
+      ),
     },
+    // {
+    //   title: '结果可视化',
+    //   content: <Visualizatin />,
+    // },
   ]
 
   //前进后退
@@ -167,7 +247,7 @@ const Evaluation = () => {
             type='primary'
             onClick={() => message.success('Processing complete!')}
           >
-            提交
+            生成报表
           </Button>
         )}
         {current > 0 && (

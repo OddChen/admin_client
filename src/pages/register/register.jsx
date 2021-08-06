@@ -5,8 +5,6 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import logo from '../../assets/images/small-logo.png'
 import options from '../../config/cityselect-config'
 import './register.less'
-import memoryUtils from '../../utils/memoryUtils'
-import storageUtils from '../../utils/storageUtils'
 import { reqAddUser } from '../../api'
 
 class Register extends Component {

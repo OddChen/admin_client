@@ -1,8 +1,7 @@
 import React, { useContext, useState, useEffect, useRef } from 'react'
-import { Table, Input, Button, Form, Select, Upload } from 'antd'
+import { Table, Input, Button, Form, Upload } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
 
-const { Option } = Select
 const EditableContext = React.createContext(null)
 const EditableRow = ({ index, ...props }) => {
   const [form] = Form.useForm()
@@ -86,49 +85,18 @@ const EditableCell = ({
 
 const DataTable = (props) => {
   const column = props.columns
-
+  //rows: dataset
   const state = props.rows
 
-  // const handleDelete = (key) => {
-  //   const dataSource = [...state.dataSource]
-  //   this.setState({
-  //     dataSource: dataSource.filter((item) => item.key !== key),
-  //   })
-  // }
-  const handleAdd = () => {
-    const { count, dataSource } = state
-    const newData = {
-      key: count,
-      city: `Edward King ${count}`,
-      age: '32',
-      address: `London, Park Lane no. ${count}`,
-    }
-    this.setState({
-      dataSource: [...dataSource, newData],
-      count: count + 1,
-    })
-  }
+  //保存修改
   const handleSave = (row) => {
-    const newData = [...this.state.dataSource]
-    const index = newData.findIndex((item) => row.key === item.key)
+    const newData = [...state]
+    const index = newData.findIndex((item) => row.id === item.id)
     const item = newData[index]
-    newData.splice(index, 1, { ...item, ...row })
-    this.setState({
-      dataSource: newData,
-    })
+    console.log(row, index, item)
+    newData.splice(index, 1, row)
+    props.handleSave(newData)
   }
-  // const [filestate, setFilestate] = useState({ name: '' })
-  // const handleLoad = (e) => {
-  // const { name, value } = e.target
-  // if (name === 'file') {
-  //   const files = e.target.files
-  //   if (files && files[0]) {
-  //     props.handleFile(files[0])
-  //   }
-  // } else {
-  //   console.log('file-else')
-  // }
-  // }
   //Upload文件
   const fileprops = {
     name: 'file',
@@ -172,16 +140,16 @@ const DataTable = (props) => {
         bordered
         dataSource={state}
         columns={columns}
-        scroll={{ x: 700 }}
+        scroll={{ x: 700, y: 200 }}
       />
       <div className='data-btn'>
         <Button
-          onClick={handleAdd}
+          onClick={props.handleAdd}
           type='primary'
           shape='round'
           style={{ marginRight: 15 }}
         >
-          增 加
+          添加数据
         </Button>
         <Upload {...fileprops}>
           <Button icon={<UploadOutlined />} shape='round'>

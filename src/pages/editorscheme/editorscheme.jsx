@@ -3,7 +3,7 @@
  */
 import { useEffect, useState } from 'react'
 import { Skeleton, Card, Button, Pagination, Spin, message } from 'antd'
-import { EditOutlined, SettingOutlined } from '@ant-design/icons'
+import { EditOutlined } from '@ant-design/icons'
 import './editorscheme.less'
 import { Link } from 'react-router-dom'
 import editorDatas from '../editor/editor-data.json'

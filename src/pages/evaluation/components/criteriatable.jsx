@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from 'react'
-import { Table, Input, Button, Popconfirm, Form, Select } from 'antd'
+import { Table, Input, Button, Popconfirm, Form, Select, Upload } from 'antd'
+import { UploadOutlined } from '@ant-design/icons'
 
 const { Option } = Select
 const EditableContext = React.createContext(null)
@@ -121,7 +122,7 @@ const CriteriaTable = (props) => {
       ),
     },
     {
-      title: '权重',
+      title: '权重(%)',
       dataIndex: 'weight',
       width: 190,
       editable: true,
@@ -162,16 +163,24 @@ const CriteriaTable = (props) => {
     const newdataSource = [...dataSource]
     setState({ dataSource: newdataSource, count })
   }, [props.rows])
-
+  //保存修改
   const handleSave = (row) => {
     const newData = [...state.dataSource]
     const index = newData.findIndex((item) => row.key === item.key)
     const item = newData[index]
     newData.splice(index, 1, { ...item, ...row })
     props.handleSave(newData)
-    // setState({
-    //   dataSource: newData,
-    // })
+  }
+  //Upload文件
+  const fileprops = {
+    name: 'file',
+    onChange: props.handleFile,
+    accept: '.xlsx, .xls',
+    progress: {
+      strokeColor: { '0%': '#108ee9', '100%': '#87d068' },
+      strokeWidth: 3,
+      format: (percent) => `${parseFloat(percent.toFixed(2))}%`,
+    },
   }
 
   return (
@@ -184,17 +193,21 @@ const CriteriaTable = (props) => {
         columns={columns}
         scroll={{ y: 200 }}
       />
-      <Button
-        onClick={props.handleAdd}
-        type='primary'
-        shape='round'
-        style={{
-          marginBottom: 20,
-          marginRight: 660,
-        }}
-      >
-        添加指标
-      </Button>
+      <div className='data-btn'>
+        <Button
+          onClick={props.handleAdd}
+          type='primary'
+          shape='round'
+          style={{ marginRight: 15 }}
+        >
+          添加指标
+        </Button>
+        <Upload {...fileprops}>
+          <Button icon={<UploadOutlined />} shape='round'>
+            上传
+          </Button>
+        </Upload>
+      </div>
     </div>
   )
 }

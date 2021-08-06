@@ -52,7 +52,7 @@ class Dashboard extends React.Component {
                 <Route path='/dashboard' component={DashBoard} />
                 <Route path='/editorscheme' component={EditorScheme} />
                 <Route path='/manage/user' component={User} />
-                <Redirect to='/dashboard' />
+                <Redirect to='/evaluation' />
               </Switch>
             </Content>
           </Layout>
