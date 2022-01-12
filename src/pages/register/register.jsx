@@ -9,7 +9,6 @@ import { reqAddUser } from '../../api'
 
 class Register extends Component {
   onFinish = async (values) => {
-    console.log(values)
     const { username, password, region } = values
     const response = await reqAddUser(username, password, region)
     //console.log('检验成功', response.data)

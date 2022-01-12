@@ -14,7 +14,7 @@ class Login extends React.Component {
   onFinish = async (values) => {
     const { username, password } = values
     const response = await reqLogin(username, password)
-    console.log('检验成功', response.data)
+    // console.log('检验成功', response.data)
     const result = response.data //{status: 0, data: } {status: 1, msg: ''}
     const user = result.data
     memoryUtils.user = user

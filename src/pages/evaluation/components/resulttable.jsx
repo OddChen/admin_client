@@ -4,7 +4,7 @@ import topsis_predict from './topsis'
 
 const ResultTable = (props) => {
   const [loading, setLoading] = useState(true)
-  const [dataset, setDataset] = useState([])
+  const [result, setResult] = useState()
 
   useEffect(() => {
     const _criteria = props.criteria.dataSource.map((item) => ({
@@ -15,24 +15,27 @@ const ResultTable = (props) => {
     const _dataset = props.dataset.map((row) => [
       ..._criteria.map((item) => row[item.name]),
     ])
+    // 评价结果
+    const cri_result = topsis_predict(_dataset, _criteria)
 
-    const result = topsis_predict(_dataset, _criteria)
+    const newresult = cri_result.map((item, index) => ({
+      key: index + 1,
+      city: props.dataset[item[0]].name,
+      score: item[1],
+    }))
+
     setTimeout(() => {
-      setDataset(
-        result.map((item, index) => ({
-          id: index + 1,
-          city: props.dataset[item[0]].name,
-          score: item[1],
-        }))
-      )
+      props.handleResult(newresult)
+      setResult(newresult)
       setLoading(false)
-    }, 1000)
-  }, [props.criteria.dataSource, props.dataset])
+    }, 100)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const columns = [
     {
       title: '排名',
-      dataIndex: 'id',
+      dataIndex: 'key',
     },
     {
       title: '城市',
@@ -52,7 +55,7 @@ const ResultTable = (props) => {
       <Table
         loading={loading}
         columns={columns}
-        dataSource={dataset}
+        dataSource={result}
         scroll={{ y: 200 }}
       />
     </div>

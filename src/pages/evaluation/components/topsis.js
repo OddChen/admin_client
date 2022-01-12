@@ -46,6 +46,6 @@ export default function topsis_predict(dataset, criteria) {
     .sort()
     .reverse()
     .map((d) => [e_vector.indexOf(d)])
-  result.forEach((item) => item.push(Math.floor(e_vector[item] * 100)))
+  result.forEach((item) => item.push((e_vector[item] * 100).toFixed(2)))
   return result
 }

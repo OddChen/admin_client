@@ -200,7 +200,7 @@
   right: 275px;
   left: 275px;
   height: 60px;
-  padding: 10px 0;
+  padding: 0 0 10px 0;
   z-index: 1;
 }
 .editor .editor-head .editor-head-btn {

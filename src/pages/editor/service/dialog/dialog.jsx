@@ -60,7 +60,7 @@ const DialogService = (() => {
             setEditValue(editValue)
 
             let response = await reqExport(editValue)
-            console.log(response)
+            // console.log(response)
             const result = response.data
             // 数据响应成功后执行下面操作
             if (result.status === 0) {
@@ -109,6 +109,8 @@ const DialogService = (() => {
         }
 
         props.onRef(methods)
+
+        //c初始渲染获取数据
         useEffect(() => {
           methods.show(props.option)
           if (!option.editReadonly) {

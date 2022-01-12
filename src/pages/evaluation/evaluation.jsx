@@ -7,6 +7,7 @@ import { criteriaToDataColumns } from './components/criteriaToDataColumns'
 import XLSX from 'xlsx'
 import ResultTable from './components/resulttable'
 import Visualizatin from './components/visualization'
+import { Link } from 'react-router-dom'
 
 const Evaluation = () => {
   //数据
@@ -15,7 +16,6 @@ const Evaluation = () => {
       dataSource: [],
       count: 0,
     },
-    sum: 0,
     dataset: [],
     result: [],
     loading: false,
@@ -160,7 +160,7 @@ const Evaluation = () => {
       ...state,
       dataset: newdata,
     })
-    console.log(state.dataset)
+    // console.log(state.dataset)
   }
   //修改
   const handleDataSave = (newData) => {
@@ -176,6 +176,16 @@ const Evaluation = () => {
     setState({
       ...state,
       dataset: newdata,
+    })
+  }
+
+  /**
+   * 评价结果保存
+   */
+  const handleDataResult = (result) => {
+    setState({
+      ...state,
+      result,
     })
   }
 
@@ -211,7 +221,12 @@ const Evaluation = () => {
     {
       title: '评价结果',
       content: (
-        <ResultTable criteria={state.criteria} dataset={state.dataset} />
+        <ResultTable
+          criteria={state.criteria}
+          dataset={state.dataset}
+          result={state.result}
+          handleResult={handleDataResult}
+        />
       ),
     },
     // {
@@ -228,6 +243,11 @@ const Evaluation = () => {
     setCurrent(current - 1)
   }
 
+  const dashboard = {
+    pathname: '/dashboard',
+    dashboardData: state,
+  }
+
   return (
     <div className='evaluation'>
       <Steps current={current}>
@@ -237,22 +257,19 @@ const Evaluation = () => {
       </Steps>
       <div className='steps-content'>{steps[current].content}</div>
       <div className='steps-action'>
+        {current > 0 && (
+          <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
+            上一步
+          </Button>
+        )}
         {current < steps.length - 1 && (
           <Button type='primary' onClick={() => next()}>
             下一步
           </Button>
         )}
         {current === steps.length - 1 && (
-          <Button
-            type='primary'
-            onClick={() => message.success('Processing complete!')}
-          >
-            生成报表
-          </Button>
-        )}
-        {current > 0 && (
-          <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
-            上一步
+          <Button type='primary'>
+            <Link to={dashboard}>可视化评价结果</Link>
           </Button>
         )}
       </div>

@@ -1,6 +1,8 @@
 import { createEditorConfig } from './editor.utils'
 import LineExample from '../charts/lines'
 import Bar3D from '../charts/bar3D'
+import BarCharts from '../charts/bar'
+import PieCharts from '../charts/pie'
 import {
   createColorProp,
   createSelectProp,
@@ -76,4 +78,36 @@ editorConfig.registryComponent('bar3d', {
     height: true,
     width: true,
   },
+})
+
+editorConfig.registryComponent('barchart', {
+  name: '柱状图',
+  // preview: () => <LineExample id='linepre' />,
+  //换成图片
+  preview: () => <span>柱状图</span>,
+  render: (randomid, size, blockprops) => (
+    <BarCharts id={randomid} size={size} blockprops={blockprops} />
+  ),
+  //是否可以拖拽宽高
+  resize: {
+    height: true,
+    width: true,
+  },
+  blockprops: {},
+})
+
+editorConfig.registryComponent('piechart', {
+  name: '饼图',
+  // preview: () => <LineExample id='linepre' />,
+  //换成图片
+  preview: () => <span>饼图</span>,
+  render: (randomid, size, blockprops) => (
+    <PieCharts id={randomid} size={size} blockprops={blockprops} />
+  ),
+  //是否可以拖拽宽高
+  resize: {
+    height: true,
+    width: true,
+  },
+  blockprops: {},
 })

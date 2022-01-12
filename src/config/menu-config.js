@@ -12,11 +12,11 @@ const menuList = [
     path: '/evaluation',
     icon: <AuditOutlined />,
   },
-  {
-    title: '展示',
-    path: '/dashboard',
-    icon: <PieChartOutlined />,
-  },
+  // {
+  //   title: '展示',
+  //   path: '/dashboard',
+  //   icon: <PieChartOutlined />,
+  // },
   {
     title: '方案',
     path: '/editorscheme',

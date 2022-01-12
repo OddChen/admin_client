@@ -1,5 +1,6 @@
 import * as echarts from 'echarts'
 import { useEffect } from 'react'
+import './index.less'
 
 const ShareDataset = () => {
   const initOption = () => {
@@ -99,10 +100,19 @@ const ShareDataset = () => {
   })
 
   return (
-    <div
-      id='sharedataset'
-      style={{ width: 600, height: 400, background: '#fff' }}
-    ></div>
+    <div className='border-container'>
+      <div
+        id='sharedataset'
+        style={{
+          width: 450,
+          height: 300,
+        }}
+      ></div>
+      <span className='top-left border-span'></span>
+      <span className='top-right border-span'></span>
+      <span className='bottom-left border-span'></span>
+      <span className='bottom-right border-span'></span>
+    </div>
   )
 }
 

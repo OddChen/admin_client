@@ -1,5 +1,6 @@
 import * as echarts from 'echarts'
 import { useEffect } from 'react'
+import './index.less'
 
 const CustomBarTrend = () => {
   const initOption = () => {
@@ -119,9 +120,9 @@ const CustomBarTrend = () => {
             type: 'bar',
             animation: false,
             name: legendData[index + 1],
-            itemStyle: {
-              opacity: 0.5,
-            },
+            // itemStyle: {
+            //   opacity: 0.5,
+            // },
             data: data,
           }
         })
@@ -136,10 +137,20 @@ const CustomBarTrend = () => {
   })
 
   return (
-    <div
-      id='custombartrend'
-      style={{ width: 600, height: 400, background: '#fff' }}
-    ></div>
+    <div className='border-container'>
+      <div
+        id='custombartrend'
+        style={{
+          width: 450,
+          height: 300,
+          // background: 'rgba(255, 255, 255, .08)',
+        }}
+      ></div>
+      <span className='top-left border-span'></span>
+      <span className='top-right border-span'></span>
+      <span className='bottom-left border-span'></span>
+      <span className='bottom-right border-span'></span>
+    </div>
   )
 }
 

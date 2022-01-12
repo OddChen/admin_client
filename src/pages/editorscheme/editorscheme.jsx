@@ -24,7 +24,7 @@ const EditorScheme = () => {
 
   setTimeout(() => {
     setSpinning(false)
-  }, 500)
+  }, 10)
 
   const user_id = memoryUtils.user.id
   useEffect(() => {
@@ -42,7 +42,7 @@ const EditorScheme = () => {
 
         setSchemes(schemesArr)
       } else {
-        message.error(result.msg, 3)
+        message.error(result.msg, 1)
       }
     }
     getData()
