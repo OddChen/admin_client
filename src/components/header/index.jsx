@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Link, withRouter } from 'react-router-dom'
 import { Menu, Modal } from 'antd'
-import logo from '../../assets/images/LOGO.png'
+import logo from '../../assets/images/small-logo.png'
 import './index.less'
 import menuList from '../../config/menu-config'
 import SubMenu from 'antd/lib/menu/SubMenu'
@@ -58,7 +58,7 @@ class Header extends Component {
       <div className='top-nav'>
         <Link to='/' className='top-nav-header'>
           <img src={logo} alt='logo' />
-          <h1>智慧城市评价结果可视化</h1>
+          <h1>数据分析结果可视化平台</h1>
         </Link>
         <Menu
           theme='dark'

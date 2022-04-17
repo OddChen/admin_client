@@ -5,7 +5,7 @@ import './index.less'
 const ShareDataset = () => {
   const initOption = () => {
     var chartDom = document.getElementById('sharedataset')
-    var myChart = echarts.init(chartDom)
+    var myChart = echarts.getInstanceByDom(chartDom) || echarts.init(chartDom)
     var option
 
     setTimeout(function () {

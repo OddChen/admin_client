@@ -92,8 +92,8 @@ const DataTable = (props) => {
   const handleSave = (row) => {
     const newData = [...state]
     const index = newData.findIndex((item) => row.id === item.id)
-    const item = newData[index]
-    console.log(row, index, item)
+    // const item = newData[index]
+    // console.log(row, index, item)
     newData.splice(index, 1, row)
     props.handleSave(newData)
   }

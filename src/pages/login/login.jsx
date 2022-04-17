@@ -42,7 +42,7 @@ class Login extends React.Component {
       <div className='login'>
         <header className='login-header'>
           <img src={logo} alt='logo' />
-          <h1>智慧城市评价结果可视化</h1>
+          <h1>数据分析结果可视化平台</h1>
         </header>
         <section className='login-content'>
           <h2>用户登录</h2>

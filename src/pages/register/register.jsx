@@ -33,7 +33,7 @@ class Register extends Component {
       <div className='register'>
         <header className='register-header'>
           <img src={logo} alt='logo' />
-          <h1>智慧城市评价结果可视化</h1>
+          <h1>数据分析结果可视化平台</h1>
         </header>
         <section className='register-content'>
           <h2>注册</h2>

@@ -7,6 +7,7 @@ import { criteriaToDataColumns } from './components/criteriaToDataColumns'
 import XLSX from 'xlsx'
 import ResultTable from './components/resulttable'
 import Visualizatin from './components/visualization'
+import store from '../../utils/storageUtils'
 import { Link } from 'react-router-dom'
 
 const Evaluation = () => {
@@ -187,6 +188,11 @@ const Evaluation = () => {
       ...state,
       result,
     })
+
+    // 将当前数据存入sessionStorage中
+    const user = store.getUser().id
+    const sessionData = JSON.stringify(state)
+    sessionStorage.setItem(`${user}`, sessionData)
   }
 
   const steps = [

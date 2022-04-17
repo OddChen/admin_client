@@ -5,6 +5,7 @@ export const criteriaToDataColumns = (dataSource, handleDelete) => {
     {
       title: '城市',
       dataIndex: 'city',
+      align: 'center',
       width: 100,
       fixed: 'left',
       editable: true,
@@ -12,12 +13,14 @@ export const criteriaToDataColumns = (dataSource, handleDelete) => {
     ...dataSource.map((column) => ({
       title: `${column.name}`,
       dataIndex: column.name,
+      align: 'center',
       width: 100,
       editable: true,
     })),
     {
       title: '操作',
       dataIndex: 'operation',
+      align: 'center',
       width: 100,
       fixed: 'right',
       render: (_, record) =>

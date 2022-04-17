@@ -533,6 +533,7 @@ const EditorPage = (props) => {
       icon: 'icon-import',
       handler: async () => {
         const text = await dialog.textarea('', {
+          editReadonly: false,
           title: '请选择要导入的方案',
         })
         // console.log(text)

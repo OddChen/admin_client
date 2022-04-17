@@ -99,17 +99,20 @@ const CriteriaTable = (props) => {
     {
       title: '序号',
       dataIndex: 'key',
+      align: 'center',
       width: 70,
     },
     {
       title: '指标名称',
       dataIndex: 'name',
+      align: 'center',
       width: 190,
       editable: true,
     },
     {
       title: '类型',
       dataIndex: 'type',
+      align: 'center',
       width: 190,
       render: (_, record) => (
         <Select
@@ -125,12 +128,14 @@ const CriteriaTable = (props) => {
     {
       title: '权重(%)',
       dataIndex: 'weight',
+      align: 'center',
       width: 190,
       editable: true,
     },
     {
       title: '操作',
       dataIndex: 'operation',
+      align: 'center',
       render: (_, record) =>
         state.dataSource.length >= 1 ? (
           <Popconfirm
@@ -152,6 +157,7 @@ const CriteriaTable = (props) => {
         record,
         editable: col.editable,
         dataIndex: col.dataIndex,
+        align: 'center',
         title: col.title,
         handleSave: handleSave,
       }),

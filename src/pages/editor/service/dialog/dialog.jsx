@@ -33,6 +33,8 @@ const DialogService = (() => {
         )
         //选项内容
         const [selectboard, setSelectboard] = useState([])
+        //产生修改后改变状态重新获取数据
+        const [ischange, setIschange] = useState(false)
 
         /**
          * 导入导出
@@ -45,8 +47,13 @@ const DialogService = (() => {
 
           //导入
           onImportConfirm: () => {
-            !!option.onImportConfirm && option.onImportConfirm(editValue)
-            methods.close()
+            // console.log(!!editValue)
+            if (!!editValue) {
+              !!option.onImportConfirm && option.onImportConfirm(editValue)
+              methods.close()
+            } else {
+              message.error('请先选择方案!', 1)
+            }
           },
 
           //导出
@@ -56,22 +63,22 @@ const DialogService = (() => {
             editValue.user_id = user_id
             editValue.name = dashboardname
             editValue.description = description
-            editValue.ispublic = ispublic
+            editValue.ispublic = ispublic ? ispublic : 0
             setEditValue(editValue)
 
             let response = await reqExport(editValue)
-            // console.log(response)
+            console.log(response)
             const result = response.data
             // 数据响应成功后执行下面操作
             if (result.status === 0) {
               setLoading(false)
+              setIschange(!ischange)
               message.success('成功导出')
               methods.close()
             } else {
-              message.error(result.msg, 3)
+              message.error(result.msg, 1)
+              setLoading(false)
             }
-            setLoading(false)
-            message.success('导出成功')
           },
         }
 
@@ -110,29 +117,28 @@ const DialogService = (() => {
 
         props.onRef(methods)
 
-        //c初始渲染获取数据
+        // 初始渲染获取数据
+        const getData = async () => {
+          const user_id = memoryUtils.user.id
+          const response = await reqGetData(user_id)
+          const result = response.data
+          // console.log('getdata')
+
+          if (result.status === 0) {
+            let board = []
+            result.data.forEach((value) => {
+              board.push(value)
+            })
+            setSelectboard(board)
+          } else {
+            message.error(result.msg, 3)
+          }
+        }
         useEffect(() => {
           methods.show(props.option)
-          if (!option.editReadonly) {
-            const getData = async () => {
-              const user_id = memoryUtils.user.id
-              const response = await reqGetData(user_id)
-              const result = response.data
-
-              if (result.status === 0) {
-                let board = []
-                result.data.forEach((value) => {
-                  board.push(value)
-                })
-                setSelectboard(board)
-              } else {
-                message.error(result.msg, 3)
-              }
-            }
-            getData()
-          }
+          getData()
           // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, [])
+        }, [ischange])
 
         return (
           <Modal

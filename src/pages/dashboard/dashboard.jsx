@@ -6,8 +6,13 @@ import './dashboard.less'
 import MapChart from './components/mapchart/index.jsx'
 import { Redirect } from 'react-router'
 import { Link } from 'react-router-dom'
+import store from '../../utils/storageUtils'
 
 const DashBoard = (props) => {
+  const user = store.getUser().id
+  const cityData = sessionStorage.getItem(`${user}`)
+  const citydata = JSON.parse(cityData)
+  console.log(citydata)
   // 指标项，数据，结果
   // const { criteria, dataset, result } = props.location.dashboardData
   const [criteria, setCriteria] = useState({
@@ -32,7 +37,10 @@ const DashBoard = (props) => {
 
   useEffect(() => {
     // console.log(props.location.dashboardData)
-    if (!!props.location.dashboardData.criteria.count) {
+    if (
+      !!props.location.dashboardData.criteria.count &&
+      !!props.location.dashboardData.dataset.length
+    ) {
       const { criteria, dataset, result } = props.location.dashboardData
       setCriteria(criteria)
       setDataset(dataset)
