@@ -9,7 +9,7 @@
   align-items: center;
   justify-content: center;
   height: 80px;
-  background-color: rgba(241, 241, 237, 0.2);
+  background-color: rgba(241, 241, 237, 0.4);
 }
 .login .login-header img {
   width: 50px;

@@ -1,69 +1,39 @@
 import React from 'react'
-const echarts = require('echarts/lib/echarts')
-require('echarts/lib/component/title')
-require('echarts/lib/component/tooltip')
-require('echarts/lib/component/legend')
-require('echarts/lib/chart/pie')
+import * as echarts from 'echarts'
 
 class PieCharts extends React.Component {
   setBarOption = () => {
     return {
-      backgroundColor: '#2c343c',
       title: {
-        text: 'Customized Pie',
-        left: 'center',
-        top: 20,
-        textStyle: {
-          color: '#ccc',
-        },
+        text: '标题',
+        subtext: '副标题',
+        left: 'right',
       },
       tooltip: {
         trigger: 'item',
       },
-      visualMap: {
-        show: false,
-        min: 80,
-        max: 600,
-        inRange: {
-          colorLightness: [0, 1],
-        },
+      legend: {
+        orient: 'vertical',
+        left: 'left',
       },
       series: [
         {
           name: 'Access From',
           type: 'pie',
-          radius: '55%',
-          center: ['50%', '50%'],
+          radius: '50%',
           data: [
-            { value: 335, name: 'Direct' },
-            { value: 310, name: 'Email' },
-            { value: 274, name: 'Union Ads' },
-            { value: 235, name: 'Video Ads' },
-            { value: 400, name: 'Search Engine' },
-          ].sort(function (a, b) {
-            return a.value - b.value
-          }),
-          roseType: 'radius',
-          label: {
-            color: 'rgba(255, 255, 255, 0.3)',
-          },
-          labelLine: {
-            lineStyle: {
-              color: 'rgba(255, 255, 255, 0.3)',
+            { value: 1048, name: 'Search Engine' },
+            { value: 735, name: 'Direct' },
+            { value: 580, name: 'Email' },
+            { value: 484, name: 'Union Ads' },
+            { value: 300, name: 'Video Ads' },
+          ],
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
             },
-            smooth: 0.2,
-            length: 10,
-            length2: 20,
-          },
-          itemStyle: {
-            color: '#c23531',
-            shadowBlur: 200,
-            shadowColor: 'rgba(0, 0, 0, 0.5)',
-          },
-          animationType: 'scale',
-          animationEasing: 'elasticOut',
-          animationDelay: function (idx) {
-            return Math.random() * 200
           },
         },
       ],
@@ -71,14 +41,6 @@ class PieCharts extends React.Component {
   }
 
   initOption = () => {
-    // echarts.use([
-    //   TitleComponent,
-    //   TooltipComponent,
-    //   VisualMapComponent,
-    //   PieChart,
-    //   CanvasRenderer,
-    //   LabelLayout,
-    // ])
     var chartDom = document.getElementById(`${this.props.id}`)
     var myBarChart =
       echarts.getInstanceByDom(this.pieChart) || echarts.init(chartDom)
@@ -102,7 +64,7 @@ class PieCharts extends React.Component {
         }}
         id={this.props.id}
         style={
-          this.props.size.width ? this.props.size : { width: 200, height: 200 }
+          this.props.size.width ? this.props.size : { width: 400, height: 400 }
         }
       ></div>
     )

@@ -188,11 +188,6 @@ const Evaluation = () => {
       ...state,
       result,
     })
-
-    // 将当前数据存入sessionStorage中
-    const user = store.getUser().id
-    const sessionData = JSON.stringify(state)
-    sessionStorage.setItem(`${user}`, sessionData)
   }
 
   const steps = [
@@ -249,9 +244,16 @@ const Evaluation = () => {
     setCurrent(current - 1)
   }
 
+  const saveData = () => {
+    // 将当前数据存入sessionStorage中
+    const user = store.getUser().id
+    const sessionData = JSON.stringify(state)
+    sessionStorage.setItem(`${user}`, sessionData)
+  }
+
   const dashboard = {
     pathname: '/dashboard',
-    dashboardData: state,
+    // dashboardData: state,
   }
 
   return (
@@ -274,7 +276,7 @@ const Evaluation = () => {
           </Button>
         )}
         {current === steps.length - 1 && (
-          <Button type='primary'>
+          <Button type='primary' onClick={() => saveData()}>
             <Link to={dashboard}>可视化评价结果</Link>
           </Button>
         )}

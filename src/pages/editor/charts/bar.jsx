@@ -4,18 +4,21 @@ require('echarts/lib/component/grid')
 require('echarts/lib/chart/bar')
 
 class BarCharts extends React.Component {
-  setBarOption = () => {
+  setBarOption = (props) => {
+    let blockprops = props.blockprops
+    let x_data = blockprops.xAxis_data?.replace(/，/g, ',').split(',')
+    let series_data = blockprops.series_data?.replace(/，/g, ',').split(',')
     return {
       xAxis: {
         type: 'category',
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        data: x_data || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       },
       yAxis: {
         type: 'value',
       },
       series: [
         {
-          data: [120, 200, 150, 80, 70, 110, 130],
+          data: series_data || [120, 200, 150, 80, 70, 110, 130],
           type: 'bar',
         },
       ],

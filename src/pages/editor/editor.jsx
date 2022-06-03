@@ -8,19 +8,24 @@ const Editor = (props) => {
   const [editorValue, setEditorValue] = useState(editorData)
 
   useEffect(() => {
-    const { id, ispublic, user_id, description, name, container, blocks } =
-      props.location.editorData
-    let editorData = {
-      id: id,
-      ispublic: ispublic,
-      user_id: user_id,
-      description: description,
-      name: name,
-      container: JSON.parse(container),
-      blocks: JSON.parse(blocks),
-    }
+    if (!props.location.editorData) {
+      props.history.push('/editorscheme')
+    } else {
+      const { id, ispublic, user_id, description, name, container, blocks } =
+        props.location.editorData
+      let editorData = {
+        id: id,
+        ispublic: ispublic,
+        user_id: user_id,
+        description: description,
+        name: name,
+        container: JSON.parse(container),
+        blocks: JSON.parse(blocks),
+      }
 
-    setEditorValue(editorData)
+      setEditorValue(editorData)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.location.editorData])
 
   return (

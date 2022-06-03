@@ -2,44 +2,66 @@ import * as echarts from 'echarts'
 import { useEffect } from 'react'
 import './index.less'
 
-const CustomBarTrend = () => {
+const CustomBarTrend = (props) => {
+  const { criteria, dataset, result } = props
+  const { count, dataSource } = criteria
+
   const initOption = () => {
     var chartDom = document.getElementById('custombartrend')
-    var myChart = echarts.init(chartDom)
+    var myChart = echarts.init(chartDom, 'dark')
     var option
 
-    var yearCount = 7
-    var categoryCount = 30
+    // var yearCount = 7
+    // var categoryCount = 30
 
+    // 指标
     var xAxisData = []
+
     var customData = []
+    // 城市
     var legendData = []
+    // 城市数据
     var dataList = []
 
-    legendData.push('trend')
+    // 折线图
+    legendData.push('趋势')
+
+    // 传入数据项
+    dataset.map((cur) => {
+      return legendData.push(cur.city)
+    })
     var encodeY = []
-    for (let i = 0; i < yearCount; i++) {
-      legendData.push(2010 + i + '')
+    const cityCount = dataset.length
+
+    for (let i = 0; i < cityCount; i++) {
+      legendData.push(dataset[i].city)
       dataList.push([])
       encodeY.push(1 + i)
     }
 
-    for (let i = 0; i < categoryCount; i++) {
-      var val = Math.random() * 1000
-      xAxisData.push('category' + i)
+    for (let i = 0; i < count; i++) {
+      // 指标名
+      const criName = dataSource[i].name
+
+      // xAxisData.push('category' + i)
+      xAxisData.push(criName)
+
+      // 趋势数据
       var customVal = [i]
       customData.push(customVal)
 
       for (var j = 0; j < dataList.length; j++) {
-        var value =
-          j === 0
-            ? echarts.number.round(val, 2)
-            : echarts.number.round(
-                Math.max(0, dataList[j - 1][i] + (Math.random() - 0.5) * 200),
-                2
-              )
-        dataList[j].push(value)
-        customVal.push(value)
+        // 当前指标下的城市数据
+        const curcityData = dataset[j][`${criName}`]
+        // var value =
+        //   j === 0
+        //     ? echarts.number.round(val, 2)
+        //     : echarts.number.round(
+        //         Math.max(0, dataList[j - 1][i] + (Math.random() - 0.5) * 200),
+        //         2
+        //       )
+        dataList[j].push(curcityData)
+        customVal.push(curcityData)
       }
     }
 
@@ -77,6 +99,7 @@ const CustomBarTrend = () => {
     }
 
     option = {
+      backgroundColor: '',
       tooltip: {
         trigger: 'axis',
       },
@@ -86,23 +109,24 @@ const CustomBarTrend = () => {
       dataZoom: [
         {
           type: 'slider',
-          start: 50,
-          end: 70,
+          start: 0,
+          end: 7,
         },
         {
           type: 'inside',
-          start: 50,
-          end: 70,
+          start: 0,
+          end: 7,
         },
       ],
       xAxis: {
         data: xAxisData,
       },
       yAxis: {},
+      grid: { top: '20%', bottom: '15%', left: '13%' },
       series: [
         {
           type: 'custom',
-          name: 'trend',
+          name: '趋势',
           renderItem: renderItem,
           itemStyle: {
             borderWidth: 2,
@@ -142,7 +166,7 @@ const CustomBarTrend = () => {
         id='custombartrend'
         style={{
           width: 450,
-          height: 300,
+          height: 400,
           // background: 'rgba(255, 255, 255, .08)',
         }}
       ></div>

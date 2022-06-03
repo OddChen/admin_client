@@ -3,7 +3,7 @@ import * as echarts from 'echarts'
 import './index.less'
 
 const MapChart = (props) => {
-  const [chartData, setChartData] = useState('')
+  const [chartData, setChartData] = useState('北京市')
 
   const region = JSON.parse(localStorage.getItem('user_key')).region
   const mapname = region.toString().substring(0, 3)
@@ -26,7 +26,8 @@ const MapChart = (props) => {
     })
     setChartData(cityData)
     // console.log(option.series[0].data)
-  }, [props.cityResult])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     echarts.registerMap(`${mapname}`, mapData)
@@ -74,7 +75,7 @@ const MapChart = (props) => {
                 linear-gradient(#cccecf, #cccecf) right bottom,
                 linear-gradient(#cccecf, #cccecf) right bottom;
             background-repeat: no-repeat;
-            background-size: .08rem .3rem, .3rem .08rem;background-color:rgba(6, 79, 111,.6);">${item.name}：<span style="color:#f9eb59;font-size:.4rem">${score}</span> </div>`
+            background-size: .08rem .3rem, .3rem .08rem;background-color:rgba(6, 79, 111,.6);">${item.name}评价得分：<span style="color:#f9eb59;font-size:.4rem">${score}</span> </div>`
             return tipHtml
           },
           borderWidth: 0,
@@ -143,7 +144,7 @@ const MapChart = (props) => {
 
   return (
     <div className='border-container'>
-      <div id='mapchart' style={{ width: '100%', height: 300 }}></div>
+      <div id='mapchart' style={{ width: '100%', height: 400 }}></div>
       <span className='top-left border-span'></span>
       <span className='top-right border-span'></span>
       <span className='bottom-left border-span'></span>

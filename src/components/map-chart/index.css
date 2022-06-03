@@ -1,0 +1,7 @@
+.mapcontent {
+  display: flex;
+  flex-direction: column;
+}
+.mapcontent #mapchart canvas {
+  margin: 0 auto;
+}

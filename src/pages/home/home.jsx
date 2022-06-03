@@ -8,6 +8,7 @@ import DashBoard from '../dashboard/dashboard'
 import User from '../user/user'
 import EditorScheme from '../editorscheme/editorscheme'
 import Evaluation from '../evaluation/evaluation'
+import Editor from '../editor/editor'
 
 const { Content, Footer } = Layout
 /**
@@ -51,6 +52,7 @@ class Dashboard extends React.Component {
                 <Route path='/evaluation' component={Evaluation} />
                 <Route path='/dashboard' component={DashBoard} />
                 <Route path='/editorscheme' component={EditorScheme} />
+                {/* <Route path='/editor' component={Editor} /> */}
                 <Route path='/manage/user' component={User} />
                 <Redirect to='/evaluation' />
               </Switch>
